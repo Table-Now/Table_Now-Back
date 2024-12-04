@@ -61,10 +61,10 @@ public class UserController {
         }
     }
 
-    //비밀번호 재설정
-    @PostMapping("/repassword")
-    public ResponseEntity<String> rePassword(@RequestBody RePasswordDto rePasswordDto) {
-        return ResponseEntity.ok().body(userService.rePassword(rePasswordDto));
+    //회원 수정
+    @PatchMapping("infoupdate")
+    public ResponseEntity<InfoUpdateDto> infoUpdate(@RequestBody InfoUpdateDto infoUpdateDto){
+        return ResponseEntity.ok(userService.infoUpdate(infoUpdateDto));
     }
 
     //회원 정지

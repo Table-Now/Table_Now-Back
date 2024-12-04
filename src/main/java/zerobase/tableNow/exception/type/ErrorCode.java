@@ -10,7 +10,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"내부 서버 오류가 발생했습니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST,"요청 데이터가 유효하지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"사용자를 찾을 수 없습니다."),
-    USER_LOGIN_REQUIRED(HttpStatus.FORBIDDEN, "로그인 후 이용해 주세요."),
+    USER_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN,"사용자가 인증되지 않았습니다. 로그인 후 다시 시도하세요."),
     USER_CANNOT_REGISTER_PRODUCT(HttpStatus.FORBIDDEN, "일반 사용자는 매장을 등록할 수 없습니다."),
     PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     USER_STATUS_STOP(HttpStatus.FORBIDDEN, "해당 아이디가 탈퇴한 회원이거나 정지된 회원입니다."),

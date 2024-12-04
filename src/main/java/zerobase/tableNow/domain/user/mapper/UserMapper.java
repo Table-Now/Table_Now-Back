@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
+import zerobase.tableNow.domain.user.dto.InfoUpdateDto;
 import zerobase.tableNow.domain.user.dto.LoginDto;
 import zerobase.tableNow.domain.user.dto.RegisterDto;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
@@ -49,6 +50,16 @@ public class UserMapper {
         return LoginDto.builder()
                 .user(entity.getUser())
                 .role(entity.getRole())
+                .build();
+    }
+
+    // 내 정보 수정
+    public InfoUpdateDto myInfoDto(UsersEntity userEntity){
+        return InfoUpdateDto.builder()
+                .password(userEntity.getPassword())
+                .email(userEntity.getEmail())
+                .phone(userEntity.getPhone())
+                .status(Status.REQ)
                 .build();
     }
 }
