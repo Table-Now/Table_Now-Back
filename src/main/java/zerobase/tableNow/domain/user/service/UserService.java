@@ -14,7 +14,7 @@ public interface UserService {
     LoginDto login(LoginDto loginDto);
 
     //비밀번호 재설정
-    String rePassword(RePasswordDto rePasswordDto);
+//    String rePassword(RePasswordDto rePasswordDto);
 
     //회원 탈퇴
     DeleteDto userDelete(String userId);
@@ -22,4 +22,7 @@ public interface UserService {
     MyInfoDto myInfo(String user);
 
     ResponseEntity<String> getKakaoUserInfo(String authorizationCode);
+
+    // 회원 수정
+    InfoUpdateDto infoUpdate(InfoUpdateDto infoUpdateDto);
 }

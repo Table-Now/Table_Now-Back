@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,6 +25,8 @@ import zerobase.tableNow.domain.user.mapper.UserMapper;
 import zerobase.tableNow.domain.user.repository.EmailRepository;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.domain.user.service.UserService;
+import zerobase.tableNow.exception.TableException;
+import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +41,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final EmailRepository emailRepository;
-    private final ReservationRepository reservationRepository;
     private final UserMapper userMapper;
     private final MailComponents mailComponents;
     private final TokenProvider tokenProvider;
@@ -59,11 +62,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
     }
 
-    /**
-     * 회원가입
-     * @param registerDto
-     * @return 등록된 회원 정보 반환
-     */
+    //회원가입
     @Override
     public RegisterDto register(RegisterDto registerDto) {
         // 중복 체크
@@ -108,12 +107,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(savedEntity);
     }
 
-    /**
-     * 이메일 인증
-     * @param user
-     * @param emailAuthKey
-     * @return 인증 성공시 True, 인증 실패시 False
-     */
+    //이메일 인증
     @Transactional
     public boolean emailAuth(String user, String emailAuthKey) {
         Optional<UsersEntity> optionalUser = userRepository.findByUser(user);
@@ -170,82 +164,125 @@ public class UserServiceImpl implements UserService {
         return responseDto;
     }
 
-    /**
-     * 비밀번호 재설정
-     * @param rePasswordDto
-     * @return 성공시 "success" 반환
-     */
+    // 회원 수정
     @Override
-    public String rePassword(RePasswordDto rePasswordDto) {
-        UsersEntity user = findUserByIdOrThrow(rePasswordDto.getUser());
-
-            if (!rePasswordDto.getEmail().equals(user.getEmail())) {
-                throw new RuntimeException("이메일이 일치하지 않습니다.");
-            }
-
-            String encodedPassword = passwordEncoder.encode(rePasswordDto.getRePassword());
-
-            user.setPassword(encodedPassword);
-            userRepository.save(user);
-
-            return "Success";
-    }
-
-    /**
-     * 회원 탈퇴
-     * @param user
-     * @return DeleteDto 반환
-     */
-    @Override
-    public DeleteDto userDelete(String user) {
-        UsersEntity users = findUserByIdOrThrow(user);
-
-        List<StoreEntity> userStores = storeRepository.findByUser(users);
-        storeRepository.deleteAll(userStores);
-
-        Optional<EmailEntity> userEmail = emailRepository.findByEmail(users);
-        if (userEmail.isEmpty()) {
-            throw new RuntimeException("ID를 찾을 수 없습니다.");
+    public InfoUpdateDto infoUpdate(InfoUpdateDto infoUpdateDto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new TableException(ErrorCode.USER_NOT_AUTHENTICATED);
         }
 
-        users.setUserStatus(Status.STOP);
-        UsersEntity savedUser = userRepository.save(users);
+        String loggedInUsername = authentication.getName(); // 현재 로그인한 사용자의 아이디
 
-        return new DeleteDto(savedUser.getUser(), savedUser.getRole());
+        UsersEntity users = userRepository.findByUser(loggedInUsername)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        // 비밀번호 수정
+        if (infoUpdateDto.getPassword() != null && !infoUpdateDto.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(infoUpdateDto.getPassword());
+            users.setPassword(encodedPassword);
+        }
+
+        // 입력된 필드만 수정
+        if (infoUpdateDto.getPassword() != null && !infoUpdateDto.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(infoUpdateDto.getPassword());
+            users.setPassword(encodedPassword);
+        }
+
+        // 이메일 수정
+        if (infoUpdateDto.getEmail() != null && !infoUpdateDto.getEmail().isEmpty()) {
+            if (!infoUpdateDto.getEmail().equals(users.getEmail())) { // 이메일 변경 시만 처리
+                users.setEmail(infoUpdateDto.getEmail());
+
+                // 기존 이메일 정보 삭제
+                Optional<EmailEntity> emailEntity = emailRepository.findByEmail(users);
+                emailEntity.ifPresent(emailRepository::delete);
+
+                // 새로운 이메일 인증 정보 생성
+                EmailEntity newEmailEntity = new EmailEntity();
+                newEmailEntity.setEmail(users);
+                newEmailEntity.setEmailAuthKey(UUID.randomUUID().toString());
+                newEmailEntity.setEmailAuthYn(false); // 초기값: 인증되지 않음
+                newEmailEntity.setUserStatus(Status.STOP);
+                emailRepository.save(newEmailEntity);
+
+                // 인증 메일 발송
+                String subject = "Commerce 이메일 인증 - 내정보 수정";
+                String text = mailComponents.getEmailAuthTemplate(users.getUser(), newEmailEntity.getEmailAuthKey());
+                boolean sendResult = mailComponents.sendMail(infoUpdateDto.getEmail(), subject, text);
+
+                if (!sendResult) {
+                    log.error("내정보 수정 후 인증 메일 발송 실패");
+                    throw new TableException(ErrorCode.EMAIL_SEND_FAILED);
+                }
+            }
+        }
+
+        // 핸드폰 번호 수정
+        if (infoUpdateDto.getPhone() != null && !infoUpdateDto.getPhone().isEmpty()) {
+            users.setPhone(infoUpdateDto.getPhone());
+        }
+
+        // 사용자 정보 저장
+        userRepository.save(users);
+
+        return userMapper.myInfoDto(users);
     }
 
-    // 내 정보 조회
-    @Override
-    public MyInfoDto myInfo(String user) {
-        UsersEntity userEntity = findUserByIdOrThrow(user);
 
-        return MyInfoDto.builder()
-                .user(userEntity.getUser())
-                .name(userEntity.getName())
-                .email(userEntity.getEmail())
-                .phone(userEntity.getPhone())
-                .createAt(userEntity.getCreateAt())
-                .build();
-    }
+    //회원탈퇴
+        @Override
+        public DeleteDto userDelete (String user){
+            UsersEntity users = findUserByIdOrThrow(user);
 
-    public ResponseEntity<String> getKakaoUserInfo(String authorizationCode) {
-        String tokenUrl = "https://kauth.kakao.com/oauth/token";
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", clientId);
-        params.add("redirect_uri", redirectUri);
-        params.add("code", authorizationCode);
+            List<StoreEntity> userStores = storeRepository.findByUser(users);
+            storeRepository.deleteAll(userStores);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            Optional<EmailEntity> userEmail = emailRepository.findByEmail(users);
+            if (userEmail.isEmpty()) {
+                throw new RuntimeException("ID를 찾을 수 없습니다.");
+            }
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            users.setUserStatus(Status.STOP);
+            UsersEntity savedUser = userRepository.save(users);
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
+            return new DeleteDto(savedUser.getUser(), savedUser.getRole());
+        }
 
-        log.info(String.valueOf(response));
+        // 내 정보 조회
+        @Override
+        public MyInfoDto myInfo (String user){
+            UsersEntity userEntity = findUserByIdOrThrow(user);
 
-        return response; // 사용자 정보 반환
-    }
+            return MyInfoDto.builder()
+                    .user(userEntity.getUser())
+                    .name(userEntity.getName())
+                    .email(userEntity.getEmail())
+                    .phone(userEntity.getPhone())
+                    .createAt(userEntity.getCreateAt())
+                    .build();
+        }
+
+        public ResponseEntity<String> getKakaoUserInfo (String authorizationCode){
+            String tokenUrl = "https://kauth.kakao.com/oauth/token";
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "authorization_code");
+            params.add("client_id", clientId);
+            params.add("redirect_uri", redirectUri);
+            params.add("code", authorizationCode);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
+
+            log.info(String.valueOf(response));
+
+            return response; // 사용자 정보 반환
+        }
+
 }
