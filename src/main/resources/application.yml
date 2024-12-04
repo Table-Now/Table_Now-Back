@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: tableNow
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/tablenow?serverTimezone=UTC&characterEncoding=UTF-8
+    username: home
+    password: 1245
+
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: update
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: jominuk1025@gmail.com
+    password: ssut kyki kgbr zgww
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  AccessSecret: kR8v#mP2$nL9qX5@jF4wC7tB1hY6sA3gE0iU8dM5xK2pW9nZ4yV6bN3cQ7mT0jH5uI8fD2oL9aS3vX6
+  AccessExpiration: 86400000
+
+kakao:
+  api:
+    key: 2ed6eb715b8f226558960d6ce8cd12cd
+
+cloud:
+  aws:
+    credentials:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    s3:
+      bucket: s3jominuk
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+security:
+  oauth2:
+    client:
+      registration:
+        kakao:  # Note the correct indentation here
+          client-id: 660ba0d12918f915b47226ae6acd4962
+          redirect-uri: http://localhost:8080/user/kakao/login
+          authorization-grant-type: authorization_code
+          client-authentication-method: POST
+          client-name: Kakao
+          scope:
+            - profile_nickname
+            - profile_image
+    provider:
+      kakao:
+        authorization-uri: https://kauth.kakao.com/oauth/authorize
+        token-uri: https://kauth.kakao.com/oauth/token
+        user-info-uri: https://kapi.kakao.com/v2/user/me
+        user-name-attribute: id
