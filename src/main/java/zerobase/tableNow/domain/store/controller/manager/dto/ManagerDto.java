@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 public class ManagerDto {
+    private Long id;
     private String user;
     private String phone;
 

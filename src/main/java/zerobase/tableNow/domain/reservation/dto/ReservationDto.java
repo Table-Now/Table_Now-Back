@@ -16,7 +16,7 @@ public class ReservationDto {
     private String phone;
 
     private String store; //상점이름
-    private LocalDateTime reserDateTime;//예약 날짜, 시간
+    private LocalDateTime reservationDateTime;//예약 날짜, 시간
     private Integer peopleNb; // 예약인원
     private Status reservationStatus; //예약10분전 체크
 

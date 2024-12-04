@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface ManagerService {
 
-
     //예약 정보 확인
     List<ConfirmDto> confirmList(String store);
 

@@ -10,7 +10,7 @@ public interface ReservationService {
     ReservationDto request(ReservationDto reservationDto);
 
     //예약 확정
-    ApprovalDto approve(String phone);
+    //ApprovalDto approve(String phone);
 
     //예약 중인지 확인
     boolean myrelist(String user, Long id);

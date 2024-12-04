@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
     //중복 예약 체크
-    List<ReservationEntity> findByStoreAndReserDateTimeBetween(
+    List<ReservationEntity> findByStoreAndReservationDateTimeBetween(
             StoreEntity store,
             LocalDateTime startDateTime,
             LocalDateTime endDateTime);

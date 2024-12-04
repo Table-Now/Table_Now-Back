@@ -25,12 +25,12 @@ public class ReservationController {
     }
 
     //예약 확정
-    @PostMapping("approval")
-    public ResponseEntity<ApprovalDto> approval(@RequestParam(name = "phone") String phone) {
-        log.info("요청 폰 번호 + {}", phone);
-        ApprovalDto response = reservationService.approve(phone);
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("approval")
+//    public ResponseEntity<ApprovalDto> approval(@RequestParam(name = "phone") String phone) {
+//        log.info("요청 폰 번호 + {}", phone);
+//        ApprovalDto response = reservationService.approve(phone);
+//        return ResponseEntity.ok(response);
+//    }
 
     // 상점 예약 체크
     @GetMapping("myrelist")

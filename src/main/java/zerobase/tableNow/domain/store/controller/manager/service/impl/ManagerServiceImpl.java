@@ -38,6 +38,7 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 조회된 상점 목록을 ManagerDto 리스트로 변환
         return storeEntities.stream().map(store -> ManagerDto.builder()
+                .id(store.getId())
                 .user(userId.getUser())
                 .store(store.getStore())
                 .storeLocation(store.getStoreLocation())
@@ -63,11 +64,11 @@ public class ManagerServiceImpl implements ManagerService {
 
         // 예약 날짜와 시간을 기준으로 오름차순 정렬
         return reservations.stream()
-                .sorted(Comparator.comparing(ReservationEntity::getReserDateTime))
+                .sorted(Comparator.comparing(ReservationEntity::getReservationDateTime))
                 .map(reservation -> ConfirmDto.builder()
                         .store(reservation.getStore().getStore())
                         .phone(reservation.getPhone())
-                        .reserDateTime(reservation.getReserDateTime())
+                        .reservationDateTime(reservation.getReservationDateTime())
                         .peopleNb(reservation.getPeopleNb())
                         .reservationStatus(reservation.getReservationStatus())
                         .build())

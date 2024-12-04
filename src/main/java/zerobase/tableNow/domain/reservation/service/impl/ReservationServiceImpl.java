@@ -56,16 +56,16 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new RuntimeException("해당 가게가 없습니다."));
 
         // 10분 단위 시간 검증
-        validateTimeInterval(reservationDto.getReserDateTime());
+        validateTimeInterval(reservationDto.getReservationDateTime());
 
         // 영업시간 체크
-        validateBusinessHours(store, reservationDto.getReserDateTime());
+        validateBusinessHours(store, reservationDto.getReservationDateTime());
 
         // 휴무일 체크
-        validateStoreHoliday(store, reservationDto.getReserDateTime());
+        validateStoreHoliday(store, reservationDto.getReservationDateTime());
 
         // 중복 예약 체크
-        validateDuplicateReservation(store, reservationDto.getReserDateTime(), users);
+        validateDuplicateReservation(store, reservationDto.getReservationDateTime(), users);
 
         // 예약 저장
         ReservationEntity reservationEntity = reservationMapper.toReserEntity(reservationDto, users, store);
@@ -73,7 +73,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         String email = users.getEmail();
         String subject = "TableNow 예약 정보";
-        String text = mailComponents.getEmailReservation(reservationDto.getStore(), reservationDto.getReserDateTime());
+        String text = mailComponents.getEmailReservation(reservationDto.getStore(), reservationDto.getReservationDateTime());
 
         mailComponents.sendMail(email, subject, text);
 
@@ -118,7 +118,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     // 중복 예약 검증
     private void validateDuplicateReservation(StoreEntity store, LocalDateTime reservationDateTime, UsersEntity user) {
-        List<ReservationEntity> existingReservations = reservationRepository.findByStoreAndReserDateTimeBetween(
+        List<ReservationEntity> existingReservations = reservationRepository.findByStoreAndReservationDateTimeBetween(
                 store,
                 reservationDateTime.minusMinutes(10),
                 reservationDateTime.plusMinutes(10)
@@ -132,9 +132,9 @@ public class ReservationServiceImpl implements ReservationService {
             }
 
             // 예약 시간이 겹치는 경우 예외 발생
-            if (reservation.getReserDateTime().isEqual(reservationDateTime)
-                    || (reservation.getReserDateTime().isAfter(reservationDateTime.minusMinutes(10))
-                    && reservation.getReserDateTime().isBefore(reservationDateTime.plusMinutes(10)))) {
+            if (reservation.getReservationDateTime().isEqual(reservationDateTime)
+                    || (reservation.getReservationDateTime().isAfter(reservationDateTime.minusMinutes(10))
+                    && reservation.getReservationDateTime().isBefore(reservationDateTime.plusMinutes(10)))) {
                 throw new RuntimeException("해당 시간대에 이미 예약이 존재합니다.");
             }
         }
@@ -145,34 +145,34 @@ public class ReservationServiceImpl implements ReservationService {
      * @param phone
      * @return 예약목록
      */
-    @Override
-    public ApprovalDto approve(String phone) {
-        Optional<ReservationEntity> optionalReservation = reservationRepository.findByPhone(phone);
-        log.info("서비스 예약 번호 확인 + {}", optionalReservation);
-        if (optionalReservation.isEmpty()) {
-            throw new IllegalArgumentException("예약 정보를 찾을 수 없습니다.");
-        }
-
-        ReservationEntity reservation = optionalReservation.get();
-        log.info("예약 내용 확인  + {}", reservation);
-
-        LocalDateTime reservationTime = reservation.getReserDateTime();
-        LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime cutoffTime = reservationTime.minusMinutes(10);
-
-        // 예약 시간 10분 전까지는 ING, 그 이후에는 STOP
-        Status status;
-        if (currentTime.isBefore(cutoffTime)) {
-            status = Status.ING;
-        } else {
-            status = Status.STOP;
-        }
-
-        reservation.setReservationStatus(status);
-        reservationRepository.save(reservation);
-
-        return new ApprovalDto(phone, status, currentTime.isBefore(cutoffTime));
-    }
+//    @Override
+//    public ApprovalDto approve(String phone) {
+//        Optional<ReservationEntity> optionalReservation = reservationRepository.findByPhone(phone);
+//        log.info("서비스 예약 번호 확인 + {}", optionalReservation);
+//        if (optionalReservation.isEmpty()) {
+//            throw new IllegalArgumentException("예약 정보를 찾을 수 없습니다.");
+//        }
+//
+//        ReservationEntity reservation = optionalReservation.get();
+//        log.info("예약 내용 확인  + {}", reservation);
+//
+//        LocalDateTime reservationTime = reservation.getReservationDateTime();
+//        LocalDateTime currentTime = LocalDateTime.now();
+//        LocalDateTime cutoffTime = reservationTime.minusMinutes(10);
+//
+//        // 예약 시간 10분 전까지는 ING, 그 이후에는 STOP
+//        Status status;
+//        if (currentTime.isBefore(cutoffTime)) {
+//            status = Status.ING;
+//        } else {
+//            status = Status.STOP;
+//        }
+//
+//        reservation.setReservationStatus(status);
+//        reservationRepository.save(reservation);
+//
+//        return new ApprovalDto(phone, status, currentTime.isBefore(cutoffTime));
+//    }
 
     // 예약중인지 확인
     @Override
