@@ -16,6 +16,7 @@ public class ManagerDto {
     private String storeImg;
     private String storeContents;
 
+    @Builder.Default
     private Integer rating = 0; // 별점
     private String storeOpen;
     private String storeClose;

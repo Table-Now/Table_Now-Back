@@ -21,6 +21,7 @@ public class EmailEntity {
     @JoinColumn(name = "email")
     private UsersEntity email;
 
+    @Builder.Default
     private boolean emailAuthYn = false; //메일 인증 했는지
     private LocalDateTime emailAuthDt; //이메일 인증 날짜
     private  String emailAuthKey; // 회원가입할때 생성해서 메일인증할때 쓰는 Key

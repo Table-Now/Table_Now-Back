@@ -32,6 +32,7 @@ public class StoreEntity extends BaseEntity {
     private String storeContents;
 
     @Column(nullable = true)
+    @Builder.Default
     private Integer rating = 0; // 별점
     private String storeOpen;
     private String storeClose;
@@ -44,5 +45,6 @@ public class StoreEntity extends BaseEntity {
     private Double distance; // 거리순
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
 }
