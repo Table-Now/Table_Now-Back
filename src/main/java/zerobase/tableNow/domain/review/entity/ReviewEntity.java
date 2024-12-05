@@ -31,6 +31,8 @@ public class ReviewEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role; //사용자타입
 
-//    @Enumerated(EnumType.STRING)
-//    private Status reservationStatus;
+    private Boolean secretReview; //비밀글
+
+    @Column(nullable = true)
+    private String password; // 비밀글 비밀번호 (암호화된 상태로 저장)
 }

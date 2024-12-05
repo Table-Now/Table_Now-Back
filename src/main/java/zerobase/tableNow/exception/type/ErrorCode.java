@@ -13,6 +13,7 @@ public enum ErrorCode {
     USER_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN, "사용자가 인증되지 않았습니다. 로그인 후 다시 시도하세요"),
     USER_CANNOT_REGISTER_PRODUCT(HttpStatus.FORBIDDEN, "일반 사용자는 매장을 등록할 수 없습니다."),
     PASSWORD_MISMATCH(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀리뷰의 비밀번호는 4자리 숫자로 설정해야 합니다."),
     USER_STATUS_STOP(HttpStatus.FORBIDDEN, "해당 아이디가 탈퇴한 회원이거나 정지된 회원입니다."),
     EMAIL_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN, "가입하신 이메일로 인증을 완료해주세요."),
 
