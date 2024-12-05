@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.reservation.dto.ApprovalDto;
+import zerobase.tableNow.domain.reservation.dto.DeleteDto;
 import zerobase.tableNow.domain.reservation.dto.ReservationDto;
 import zerobase.tableNow.domain.reservation.service.ReservationService;
 
@@ -22,6 +23,13 @@ public class ReservationController {
     public ResponseEntity<ReservationDto> request(@RequestBody ReservationDto reservationDto){
         log.info("컨트롤러 요청 등록 + {}", reservationDto);
         return ResponseEntity.ok().body(reservationService.request(reservationDto));
+    }
+
+    //예약 취소
+    @DeleteMapping("delete")
+    public ResponseEntity<Void> delete(@RequestParam("id") Long id){
+        reservationService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     //예약 확정
