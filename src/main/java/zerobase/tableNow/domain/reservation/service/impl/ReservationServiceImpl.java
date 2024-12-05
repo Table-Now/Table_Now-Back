@@ -58,10 +58,10 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new RuntimeException("해당 가게가 없습니다."));
 
         // 영업시간 체크
-        validateBusinessHours(store, reservationDto.getReservationDateTime());
+        //validateBusinessHours(store, reservationDto.getReservationDateTime());
 
         // 휴무일 체크
-        validateStoreHoliday(store, reservationDto.getReservationDateTime());
+        //validateStoreHoliday(store, reservationDto.getReservationDateTime());
 
         // 예약 저장
         ReservationEntity reservationEntity = reservationMapper.toReserEntity(reservationDto, users, store);
@@ -69,7 +69,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         String email = users.getEmail();
         String subject = "TableNow 예약 정보";
-        String text = mailComponents.getEmailReservation(reservationDto.getStore(), reservationDto.getReservationDateTime());
+        String text = mailComponents.getEmailReservation(reservationDto.getStore());
 
         mailComponents.sendMail(email, subject, text);
 
@@ -85,32 +85,32 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     // 영업시간 검증
-    private void validateBusinessHours(StoreEntity store, LocalDateTime reservationTime) {
-        LocalTime reservationLocalTime = reservationTime.toLocalTime();
-
-        // 매장 영업시간 파싱 (HH:mm 형식 가정)
-        LocalTime openTime = LocalTime.parse(store.getStoreOpen());
-        LocalTime closeTime = LocalTime.parse(store.getStoreClose());
-
-        if (reservationLocalTime.isBefore(openTime) ||
-                reservationLocalTime.isAfter(closeTime)) {
-            throw new RuntimeException(
-                    String.format("영업시간 외 예약입니다. 영업시간: %s ~ %s",
-                            store.getStoreOpen(),
-                            store.getStoreClose())
-            );
-        }
-    }
+//    private void validateBusinessHours(StoreEntity store, LocalDateTime reservationTime) {
+//        LocalTime reservationLocalTime = reservationTime.toLocalTime();
+//
+//        // 매장 영업시간 파싱 (HH:mm 형식 가정)
+//        LocalTime openTime = LocalTime.parse(store.getStoreOpen());
+//        LocalTime closeTime = LocalTime.parse(store.getStoreClose());
+//
+//        if (reservationLocalTime.isBefore(openTime) ||
+//                reservationLocalTime.isAfter(closeTime)) {
+//            throw new RuntimeException(
+//                    String.format("영업시간 외 예약입니다. 영업시간: %s ~ %s",
+//                            store.getStoreOpen(),
+//                            store.getStoreClose())
+//            );
+//        }
+//    }
 
     // 휴무일 검증
-    private void validateStoreHoliday(StoreEntity store, LocalDateTime reservationTime) {
-        String dayOfWeek = reservationTime.getDayOfWeek()
-                .getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-
-        if (store.getStoreWeekOff().contains(dayOfWeek)) {
-            throw new RuntimeException("해당 날짜는 매장 휴무일입니다.");
-        }
-    }
+//    private void validateStoreHoliday(StoreEntity store, LocalDateTime reservationTime) {
+//        String dayOfWeek = reservationTime.getDayOfWeek()
+//                .getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+//
+//        if (store.getStoreWeekOff().contains(dayOfWeek)) {
+//            throw new RuntimeException("해당 날짜는 매장 휴무일입니다.");
+//        }
+//    }
 
     // 사용자 상점 예약 리스트 목록
     @Override
