@@ -31,10 +31,7 @@ public class ReservationEntity extends BaseEntity {
     @JoinColumn(name = "store_id")
     private StoreEntity store; //상점이름
 
-    private LocalDateTime reservationDateTime;//예약 날짜, 시간
     private Integer peopleNb; // 예약인원
 
-    @Enumerated(EnumType.STRING)
-    private Status reservationStatus; //예약 10분전 체크
 
 }

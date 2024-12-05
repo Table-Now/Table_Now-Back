@@ -55,11 +55,10 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 해당 상점을 이용한 유저인지 확인
-        boolean hasValidReservation = reservationRepository.existsByUserAndStoreAndReservationStatus(
+        boolean hasValidReservation = reservationRepository.existsByUserAndStore(
                 user,
-                storeEntity,
-                Status.REQ
-        );
+                storeEntity);
+
         if (!hasValidReservation) {
             throw new TableException(ErrorCode.PRODUCT_NOT_PURCHASED);
         }

@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface ManagerRepository extends JpaRepository<ReservationEntity,Long> {
     // 매니저전용 상점 예약목록
-    List<ReservationEntity> findByStore_StoreAndReservationStatus(String store, Status reservationStatus);
+    List<ReservationEntity> findByStore_Store(String store);
 }

@@ -37,6 +37,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 예약 요청
+     *
      * @param reservationDto
      * @return
      */
@@ -56,17 +57,11 @@ public class ReservationServiceImpl implements ReservationService {
                 .findByStore(reservationDto.getStore())
                 .orElseThrow(() -> new RuntimeException("해당 가게가 없습니다."));
 
-        // 10분 단위 시간 검증
-        validateTimeInterval(reservationDto.getReservationDateTime());
-
         // 영업시간 체크
         validateBusinessHours(store, reservationDto.getReservationDateTime());
 
         // 휴무일 체크
         validateStoreHoliday(store, reservationDto.getReservationDateTime());
-
-        // 중복 예약 체크
-        validateDuplicateReservation(store, reservationDto.getReservationDateTime(), users);
 
         // 예약 저장
         ReservationEntity reservationEntity = reservationMapper.toReserEntity(reservationDto, users, store);
@@ -87,14 +82,6 @@ public class ReservationServiceImpl implements ReservationService {
         //대기 2팀 남았을때 취소 할 경우 2일동안 해당 매장 줄서기 금지
 
         reservationRepository.deleteById(id);
-    }
-
-    // 10분 단위 시간 검증
-    private void validateTimeInterval(LocalDateTime reservationTime) {
-        int minute = reservationTime.getMinute();
-        if (minute % 10 != 0) {
-            throw new RuntimeException("예약은 10분 단위로만 가능합니다. 예: 00, 10, 20, 30, 40, 50분");
-        }
     }
 
     // 영업시간 검증
@@ -125,29 +112,19 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    // 중복 예약 검증
-    private void validateDuplicateReservation(StoreEntity store, LocalDateTime reservationDateTime, UsersEntity user) {
-        List<ReservationEntity> existingReservations = reservationRepository.findByStoreAndReservationDateTimeBetween(
-                store,
-                reservationDateTime.minusMinutes(10),
-                reservationDateTime.plusMinutes(10)
-        );
+    // 사용자 상점 예약 리스트 목록
+    @Override
+    public List<ReservationDto> reservationList(String user) {
+        UsersEntity userId = userRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다."));
 
-        // 예약 시간이 겹치는 예약이 있는지 검사
-        for (ReservationEntity reservation : existingReservations) {
-            // 동일한 사용자의 예약인 경우 제외
-            if (reservation.getUser().equals(user)) {
-                continue;
-            }
+        List<ReservationEntity> entities = reservationRepository.findByUser(userId);
 
-            // 예약 시간이 겹치는 경우 예외 발생
-            if (reservation.getReservationDateTime().isEqual(reservationDateTime)
-                    || (reservation.getReservationDateTime().isAfter(reservationDateTime.minusMinutes(10))
-                    && reservation.getReservationDateTime().isBefore(reservationDateTime.plusMinutes(10)))) {
-                throw new RuntimeException("해당 시간대에 이미 예약이 존재합니다.");
-            }
-        }
+        return entities.stream()
+                .map(reservationMapper::toReserDto)
+                .collect(Collectors.toList());
     }
+
 
     /**
      * 예약확정
@@ -189,18 +166,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.existsByUserUserAndId(user, id);
     }
 
-    // 사용자 상점 예약 리스트 목록
-    @Override
-    public List<ReservationDto> reservationList(String user) {
-        UsersEntity userId = userRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다."));
-
-        List<ReservationEntity> entities = reservationRepository.findByUser(userId);
-
-        return entities.stream()
-                .map(reservationMapper::toReserDto)
-                .collect(Collectors.toList());
-    }
 
 
 

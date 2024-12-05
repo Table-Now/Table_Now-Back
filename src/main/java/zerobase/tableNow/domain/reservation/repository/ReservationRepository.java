@@ -14,19 +14,12 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
-    //중복 예약 체크
-    List<ReservationEntity> findByStoreAndReservationDateTimeBetween(
-            StoreEntity store,
-            LocalDateTime startDateTime,
-            LocalDateTime endDateTime);
-
     //폰번호으로 예약 승인
     Optional<ReservationEntity> findByPhone(String phone);
 
-    boolean existsByUserAndStoreAndReservationStatus(
+    boolean existsByUserAndStore(
             UsersEntity user
-            , StoreEntity store
-            , Status reservationStatus);
+            , StoreEntity store);
 
     List<ReservationEntity> findByUser(UsersEntity user);
 
