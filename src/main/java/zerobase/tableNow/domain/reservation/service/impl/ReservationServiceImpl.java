@@ -146,15 +146,28 @@ public class ReservationServiceImpl implements ReservationService {
         List<ReservationEntity> entities = reservationRepository.findByUser(userId);
 
         return entities.stream()
-                .map(reservationMapper::toReserDto)
+                .map(reservation -> {
+                    // storeId를 추가로 포함시켜 ReservationDto로 변환
+                    ReservationDto dto = reservationMapper.toReserDto(reservation);
+                    dto.setStoreId(reservation.getStore().getId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
     // 예약중인지 확인
     @Override
     public boolean myrelist(String user, Long id) {
-        return reservationRepository.existsByUserUserAndId(user, id);
+        log.info("Input user: {}", user); // 사용자 이름 로깅
+        log.info("Input id: {}", id); // 예약 ID 로깅
+
+        boolean exists = reservationRepository.existsByStoreId(id);
+
+        log.info("Query result for user '{}' and id '{}': {}", user, id, exists); // 쿼리 결과 로깅
+        return exists;
     }
+
 
 
 }

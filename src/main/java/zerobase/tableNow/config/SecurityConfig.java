@@ -71,7 +71,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://tablenow.org", "https://www.tablenow.org"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "https://tablenow.org",
+                "https://www.tablenow.org",
+                "https://backend.tablenow.org",
+                "https://www.backend.tablenow.org"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));

@@ -22,14 +22,16 @@ public class ReservationMapper {
                 .build();
 
     }
-    public ReservationDto toReserDto(ReservationEntity reservationEntity){
+    public ReservationDto toReserDto(ReservationEntity reservationEntity) {
         return ReservationDto.builder()
                 .id(reservationEntity.getId())
                 .userId(reservationEntity.getUser().getUser())
                 .phone(reservationEntity.getPhone())
-                .store(reservationEntity.getStore().getStore())
+                .store(reservationEntity.getStore().getStore())  // 상점 이름
                 .peopleNb(reservationEntity.getPeopleNb())
                 .reservationStatus(reservationEntity.getReservationStatus())
+                .storeId(reservationEntity.getStore().getId())  // 상점 ID 추가
                 .build();
     }
+
 }
