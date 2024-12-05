@@ -60,17 +60,14 @@ public class ManagerServiceImpl implements ManagerService {
      */
     @Override
     public List<ConfirmDto> confirmList(String store) {
-        List<ReservationEntity> reservations = managerRepository.findByStore_StoreAndReservationStatus(store, Status.ING);
+        List<ReservationEntity> reservations = managerRepository.findByStore_Store(store);
 
         // 예약 날짜와 시간을 기준으로 오름차순 정렬
         return reservations.stream()
-                .sorted(Comparator.comparing(ReservationEntity::getReservationDateTime))
                 .map(reservation -> ConfirmDto.builder()
                         .store(reservation.getStore().getStore())
                         .phone(reservation.getPhone())
-                        .reservationDateTime(reservation.getReservationDateTime())
                         .peopleNb(reservation.getPeopleNb())
-                        .reservationStatus(reservation.getReservationStatus())
                         .build())
                 .collect(Collectors.toList());
     }
