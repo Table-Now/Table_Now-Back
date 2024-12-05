@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.reservation.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import zerobase.tableNow.components.MailComponents;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.reservation.dto.ApprovalDto;
@@ -78,6 +79,14 @@ public class ReservationServiceImpl implements ReservationService {
         mailComponents.sendMail(email, subject, text);
 
         return reservationMapper.toReserDto(saveEntity);
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        //대기 2팀 남았을때 취소 할 경우 2일동안 해당 매장 줄서기 금지
+
+        reservationRepository.deleteById(id);
     }
 
     // 10분 단위 시간 검증
