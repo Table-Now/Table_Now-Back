@@ -14,6 +14,8 @@ public class ReviewDto{
     private String user;
     private String store; // 상점
     private String contents; // 리뷰내용
-    private Role role; //사용자타입
+    private Role role;
+    private Boolean secretReview;
+    private String password; // 비밀번호 (비밀리뷰일 때만 저장)
 
 }

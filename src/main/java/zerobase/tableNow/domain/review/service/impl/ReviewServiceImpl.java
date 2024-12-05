@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
@@ -18,6 +19,8 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
+import zerobase.tableNow.exception.TableException;
+import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReservationRepository reservationRepository;
     private final StoreRepository storeRepository;
     private final ReviewMapper reviewMapper;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 리뷰 등록
@@ -44,11 +48,11 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDto register(ReviewDto reviewDto) {
         // 사용자 확인
         UsersEntity user = userRepository.findByUser(reviewDto.getUser())
-                .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // store 이름으로 StoreEntity 조회
         StoreEntity storeEntity = storeRepository.findByStore(reviewDto.getStore())
-                .orElseThrow(() -> new RuntimeException("해당 상점을 찾을 수 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 해당 상점을 이용한 유저인지 확인
         boolean hasValidReservation = reservationRepository.existsByUserAndStoreAndReservationStatus(
@@ -57,8 +61,15 @@ public class ReviewServiceImpl implements ReviewService {
                 Status.REQ
         );
         if (!hasValidReservation) {
-            throw new RuntimeException("상점을 이용 후 리뷰를 작성할 수 있습니다.");
+            throw new TableException(ErrorCode.PRODUCT_NOT_PURCHASED);
         }
+        // 비밀리뷰일 경우 비밀번호 유효성 검사
+        if (Boolean.TRUE.equals(reviewDto.getSecretReview())) { // secretReview가 true일 경우만 검사
+            if (reviewDto.getPassword() == null || reviewDto.getPassword().length() != 4) {
+                throw new TableException(ErrorCode.INVALID_PASSWORD);
+            }
+        }
+
 
         // ReviewEntity 생성 및 저장
         ReviewEntity reviewEntity = reviewMapper.toReviewEntity(reviewDto, user);
