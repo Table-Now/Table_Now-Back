@@ -2,6 +2,8 @@ package zerobase.tableNow.domain.reservation.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDateTime;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.tableNow.components.MailComponents;
@@ -16,13 +18,11 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
+import zerobase.tableNow.exception.TableException;
+import zerobase.tableNow.exception.type.ErrorCode;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,6 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final StoreRepository storeRepository;
     private final ReservationMapper reservationMapper;
     private final MailComponents mailComponents;
+    private final Queue<Integer> waitingNumberQueue;
 
     /**
      * 예약 요청
@@ -47,7 +48,7 @@ public class ReservationServiceImpl implements ReservationService {
         // 사용자와 매장 정보 조회
         UsersEntity users = userRepository
                 .findByUser(reservationDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         if (!users.getPhone().equals(reservationDto.getPhone())) {
             throw new RuntimeException("가입하신 번호와 다른 번호입니다. 확인해주세요");
@@ -55,13 +56,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         StoreEntity store = storeRepository
                 .findByStore(reservationDto.getStore())
-                .orElseThrow(() -> new RuntimeException("해당 가게가 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // 영업시간 체크
-        //validateBusinessHours(store, reservationDto.getReservationDateTime());
-
-        // 휴무일 체크
-        //validateStoreHoliday(store, reservationDto.getReservationDateTime());
+        //유저가 줄서기중  다른 매장 줄서기 등록 X
+        boolean isAlreadyQueued = reservationRepository.existsByUserAndStoreNot(users, store);
+        if (isAlreadyQueued){
+            throw  new TableException(ErrorCode.CONFLICT);
+        }
 
         // 예약 저장
         ReservationEntity reservationEntity = reservationMapper.toReserEntity(reservationDto, users, store);
@@ -76,47 +77,71 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationMapper.toReserDto(saveEntity);
     }
 
+    //예약 취소
     @Transactional
     @Override
     public void delete(Long id) {
-        //대기 2팀 남았을때 취소 할 경우 2일동안 해당 매장 줄서기 금지
+        //예약 엔티티 조회
+        ReservationEntity reservationEntity = reservationRepository.findById(id)
+                        .orElseThrow(()-> new TableException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        // 해당 예약의 상점 정보 조회
+        StoreEntity store = reservationEntity.getStore();
+
+        //해당 상점에서 '진행 중'인 대기팀 수 확인
+        long remainingReservations = reservationRepository
+                .countByStoreAndReservationStatus(store, Status.ING);
+
+        if (remainingReservations == 2){
+            store.setIsQueueRestricted(true);
+            store.setQueueRestrictionEndTime(LocalDateTime.now().plusDays(2));  // 2일 후에 금지 해제
+            storeRepository.save(store);
+        }
 
         reservationRepository.deleteById(id);
     }
 
-    // 영업시간 검증
-//    private void validateBusinessHours(StoreEntity store, LocalDateTime reservationTime) {
-//        LocalTime reservationLocalTime = reservationTime.toLocalTime();
-//
-//        // 매장 영업시간 파싱 (HH:mm 형식 가정)
-//        LocalTime openTime = LocalTime.parse(store.getStoreOpen());
-//        LocalTime closeTime = LocalTime.parse(store.getStoreClose());
-//
-//        if (reservationLocalTime.isBefore(openTime) ||
-//                reservationLocalTime.isAfter(closeTime)) {
-//            throw new RuntimeException(
-//                    String.format("영업시간 외 예약입니다. 영업시간: %s ~ %s",
-//                            store.getStoreOpen(),
-//                            store.getStoreClose())
-//            );
-//        }
-//    }
+    // 예약확정
+    @Override
+    public ApprovalDto approve(String phone) {
+        // 해당 전화번호로 예약 엔티티를 조회
+        ReservationEntity reservationEntity = reservationRepository.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("해당 번호가 없습니다."));
 
-    // 휴무일 검증
-//    private void validateStoreHoliday(StoreEntity store, LocalDateTime reservationTime) {
-//        String dayOfWeek = reservationTime.getDayOfWeek()
-//                .getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-//
-//        if (store.getStoreWeekOff().contains(dayOfWeek)) {
-//            throw new RuntimeException("해당 날짜는 매장 휴무일입니다.");
-//        }
-//    }
+        // 상태가 ING(진행 중)인 경우에만 대기번호를 부여
+        if (reservationEntity.getReservationStatus() == Status.ING) {
+            // 대기번호 부여 (큐에서 하나씩 꺼내서 부여)
+            Integer waitingNumber =
+                    waitingNumberQueue.isEmpty() ? 1 : waitingNumberQueue.poll();// 큐에서 대기번호를 꺼내고, 다음 번호 부여
+
+            // 다음 대기번호를 큐에 추가
+            waitingNumberQueue.add(waitingNumber + 1);
+
+            // 줄서기 상태는 STOP으로 변경
+            reservationEntity.setReservationStatus(Status.STOP);
+            reservationEntity.setWaitingNumber(waitingNumber);  // 대기번호 설정
+            reservationRepository.save(reservationEntity);  // 변경된 상태 저장
+
+            // ApprovalDto 응답 객체 생성
+            return new ApprovalDto("대기가 확정되었습니다. 대기번호 : " + waitingNumber);
+        } else {
+            // 이미 대기 상태가 아니면 예외 처리
+            throw new RuntimeException("이미 대기 상태가 아닙니다");
+        }
+    }
+    public void resetWaitingNumbers() {
+       // 큐를 비우고, 대기번호를 1로 리셋
+        waitingNumberQueue.clear();
+        waitingNumberQueue.add(1); // 첫 번째 대기번호를 1로 설정
+        log.info("대기번호가 초기화되었습니다.");
+    }
+
 
     // 사용자 상점 예약 리스트 목록
     @Override
     public List<ReservationDto> reservationList(String user) {
         UsersEntity userId = userRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         List<ReservationEntity> entities = reservationRepository.findByUser(userId);
 
@@ -125,48 +150,11 @@ public class ReservationServiceImpl implements ReservationService {
                 .collect(Collectors.toList());
     }
 
-
-    /**
-     * 예약확정
-     * @param phone
-     * @return 예약목록
-     */
-//    @Override
-//    public ApprovalDto approve(String phone) {
-//        Optional<ReservationEntity> optionalReservation = reservationRepository.findByPhone(phone);
-//        log.info("서비스 예약 번호 확인 + {}", optionalReservation);
-//        if (optionalReservation.isEmpty()) {
-//            throw new IllegalArgumentException("예약 정보를 찾을 수 없습니다.");
-//        }
-//
-//        ReservationEntity reservation = optionalReservation.get();
-//        log.info("예약 내용 확인  + {}", reservation);
-//
-//        LocalDateTime reservationTime = reservation.getReservationDateTime();
-//        LocalDateTime currentTime = LocalDateTime.now();
-//        LocalDateTime cutoffTime = reservationTime.minusMinutes(10);
-//
-//        // 예약 시간 10분 전까지는 ING, 그 이후에는 STOP
-//        Status status;
-//        if (currentTime.isBefore(cutoffTime)) {
-//            status = Status.ING;
-//        } else {
-//            status = Status.STOP;
-//        }
-//
-//        reservation.setReservationStatus(status);
-//        reservationRepository.save(reservation);
-//
-//        return new ApprovalDto(phone, status, currentTime.isBefore(cutoffTime));
-//    }
-
     // 예약중인지 확인
     @Override
     public boolean myrelist(String user, Long id) {
         return reservationRepository.existsByUserUserAndId(user, id);
     }
-
-
 
 
 }

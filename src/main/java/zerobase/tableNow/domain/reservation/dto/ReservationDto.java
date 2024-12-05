@@ -17,5 +17,8 @@ public class ReservationDto {
 
     private String store; //상점이름
     private Integer peopleNb; // 예약인원
+    private Status reservationStatus; // 줄서기여부
+
+
 
 }

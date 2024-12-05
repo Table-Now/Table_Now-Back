@@ -18,6 +18,7 @@ public class ReservationMapper {
                 .phone(optionalUsers.getPhone())
                 .store(optionalStore)
                 .peopleNb(reservationDto.getPeopleNb())
+                .reservationStatus(Status.ING)
                 .build();
 
     }
@@ -28,6 +29,7 @@ public class ReservationMapper {
                 .phone(reservationEntity.getPhone())
                 .store(reservationEntity.getStore().getStore())
                 .peopleNb(reservationEntity.getPeopleNb())
+                .reservationStatus(reservationEntity.getReservationStatus())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package zerobase.tableNow.domain.store.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.joda.time.LocalDateTime;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
@@ -47,4 +48,7 @@ public class StoreEntity extends BaseEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
+
+    private Boolean isQueueRestricted;  // 줄서기 금지 상태
+    private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 }

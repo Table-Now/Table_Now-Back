@@ -24,4 +24,8 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     List<ReservationEntity> findByUser(UsersEntity user);
 
     boolean existsByUserUserAndId(String user, Long id);
+
+    boolean existsByUserAndStoreNot(UsersEntity users, StoreEntity store);
+
+    long countByStoreAndReservationStatus(StoreEntity store, Status status);
 }
