@@ -55,13 +55,12 @@ public class MailComponents {
     }
 
     // 예약이 되었는지에 대한 확인 메일
-    public String getEmailReservation(String store, LocalDateTime time) {
+    public String getEmailReservation(String store) {
         return "<div style='margin:50px; padding:20px; font-family:Arial, sans-serif; color:#333; border:1px solid #ddd; border-radius:8px;'>" +
                 "<h2 style='color:#007bff;'>예약이 완료되었습니다!</h2>" +
                 "<p>아래의 정보로 예약이 완료되었습니다:</p>" +
                 "<div style='margin-top:20px;'>" +
                 "<p><strong>상점명:</strong> " + store + "</p>" +
-                "<p><strong>예약 시간:</strong> " + time.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분")) + "</p>" +
                 "</div>" +
                 "<br/>" +
                 "<p>예약 해주셔서 감사합니다. 감사합니다!</p>" +
