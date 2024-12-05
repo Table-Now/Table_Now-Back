@@ -14,9 +14,18 @@ public class ReviewMapper {
     private final PasswordEncoder passwordEncoder;
 
     //리뷰 등록 Dto -> Entity
-    public ReviewEntity toReviewEntity(ReviewDto reviewDto ,
-                                       UsersEntity optionalUsers){
-        String hashPassword = passwordEncoder.encode(reviewDto.getPassword());
+    public ReviewEntity toReviewEntity(ReviewDto reviewDto, UsersEntity optionalUsers) {
+        String hashPassword = null;
+
+        // 비밀 리뷰일 때만 비밀번호를 처리
+        if (Boolean.TRUE.equals(reviewDto.getSecretReview())) {
+            // 비밀번호가 없으면 예외를 던지거나 처리하도록 할 수 있습니다.
+            if (reviewDto.getPassword() == null) {
+                throw new IllegalArgumentException("Password cannot be null for secret reviews");
+            }
+            // 비밀번호 해싱
+            hashPassword = passwordEncoder.encode(reviewDto.getPassword());
+        }
 
         return ReviewEntity.builder()
                 .id(reviewDto.getId())
@@ -25,7 +34,7 @@ public class ReviewMapper {
                 .contents(reviewDto.getContents())
                 .role(reviewDto.getRole())
                 .secretReview(reviewDto.getSecretReview())
-                .password(hashPassword)
+                .password(hashPassword)  // 비밀번호가 null이면 비밀번호 필드를 null로 저장
                 .build();
     }
 

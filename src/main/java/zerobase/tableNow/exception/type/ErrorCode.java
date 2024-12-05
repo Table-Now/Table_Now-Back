@@ -20,11 +20,17 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상점을 찾을 수 없습니다."),
     PRODUCT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "동일한 상점이 이미 존재합니다."),
 
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
+    STORE_RESTRICTED(HttpStatus.FORBIDDEN, "해당 매장은 현재 줄서기 금지 상태입니다."),
+    CONFLICT(HttpStatus.CONFLICT, "이미 다른 매장에 줄서기를 등록하셨습니다. 기존 예약을 취소하거나 확인해주세요."),
+
     PRODUCT_NOT_PURCHASED(HttpStatus.FORBIDDEN, "해당 매장을 이용한 적이 없으므로 리뷰를 남길 수 없습니다."),
     DUPLICATE_REVIEW(HttpStatus.FORBIDDEN, "이미 해당 매장에 대해 리뷰를 남겼습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰가 없습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "리뷰를 수정할 권한이 없습니다."),
     EMAIL_SEND_FAILED(HttpStatus.FORBIDDEN,"내정보 수정 -> 인증 메일 발송 실패");
+
+
 
     private final HttpStatus status;
     private final String description;

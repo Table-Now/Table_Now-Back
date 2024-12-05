@@ -30,8 +30,12 @@ public class ReservationEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private StoreEntity store; //상점이름
-
     private Integer peopleNb; // 예약인원
+
+    @Enumerated(EnumType.STRING)
+    private Status reservationStatus; // 줄서기 여부
+
+    private Integer waitingNumber; // 대기번호
 
 
 }
