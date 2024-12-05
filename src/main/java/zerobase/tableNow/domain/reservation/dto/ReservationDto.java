@@ -19,6 +19,5 @@ public class ReservationDto {
     private Integer peopleNb; // 예약인원
     private Status reservationStatus; // 줄서기여부
 
-
-
+    private Long storeId;
 }
