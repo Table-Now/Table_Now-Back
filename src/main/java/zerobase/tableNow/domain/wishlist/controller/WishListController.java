@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.wishlist.dto.WishListRequestDto;
+import zerobase.tableNow.domain.wishlist.dto.WishListStoreListDto;
 import zerobase.tableNow.domain.wishlist.service.WishListService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/wishlist")
@@ -40,7 +40,7 @@ public class WishListController {
 
     //찜 목록
     @GetMapping("/")
-    public ResponseEntity<List<WishListRequestDto>> wishList(@RequestParam(name = "user") String user){
+    public ResponseEntity<List<WishListStoreListDto>> wishList(@RequestParam(name = "user") String user){
         return ResponseEntity.ok().body(wishListService.wishList(user));
     }
 }
