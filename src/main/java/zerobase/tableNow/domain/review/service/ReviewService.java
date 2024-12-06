@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.review.service;
 
+import zerobase.tableNow.domain.review.dto.PasswordRequestDto;
 import zerobase.tableNow.domain.review.dto.ReviewDto;
 import zerobase.tableNow.domain.review.dto.UpdateDto;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
@@ -19,6 +20,7 @@ public interface ReviewService {
     //리뷰 삭제
     void delete(String user,Long id);
 
-
+    //리뷰 암호 요청
+    boolean passwordRequest(PasswordRequestDto passwordRequestDto);
 
 }

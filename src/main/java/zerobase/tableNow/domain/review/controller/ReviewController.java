@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.review.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zerobase.tableNow.domain.review.dto.PasswordRequestDto;
 import zerobase.tableNow.domain.review.dto.ReviewDto;
 import zerobase.tableNow.domain.review.dto.UpdateDto;
 import zerobase.tableNow.domain.review.service.ReviewService;
@@ -40,5 +41,11 @@ public class ReviewController {
                                     @RequestParam(name = "id")Long id){
         reviewService.delete(user,id);
         return ResponseEntity.noContent().build();
+    }
+    //리뷰 비밀글 암호입력 확인 요청
+    @PostMapping("passwordrequest")
+    public  ResponseEntity<Boolean> passwordRequest(
+            @RequestBody PasswordRequestDto passwordRequestDto){
+        return ResponseEntity.ok().body(reviewService.passwordRequest(passwordRequestDto));
     }
 }

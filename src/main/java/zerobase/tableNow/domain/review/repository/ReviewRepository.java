@@ -17,5 +17,4 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
     // 리뷰 수정 (리뷰가 있는지)
     Optional<ReviewEntity> findByUser(UsersEntity user);
-    boolean existsByUser(UsersEntity user);
 }

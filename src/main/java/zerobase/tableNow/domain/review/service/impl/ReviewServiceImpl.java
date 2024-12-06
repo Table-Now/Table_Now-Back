@@ -4,11 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import zerobase.tableNow.domain.constant.Role;
-import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
+import zerobase.tableNow.domain.review.dto.PasswordRequestDto;
 import zerobase.tableNow.domain.review.dto.ReviewDto;
 import zerobase.tableNow.domain.review.dto.UpdateDto;
 import zerobase.tableNow.domain.review.entity.ReviewEntity;
@@ -150,6 +152,31 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 5. 리뷰 삭제
         reviewRepository.delete(review);
+    }
+
+    //리뷰 암호확인 요청
+    @Override
+    public boolean passwordRequest(PasswordRequestDto passwordRequestDto) {
+        //로그인한 유저 가져오기
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UsersEntity users = userRepository.findByUser(userId)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        //해당 유저가 아닐시
+        if (!users.getUser().equals(passwordRequestDto.getUser())){
+            throw new TableException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 리뷰 정보 가져오기
+        ReviewEntity reviewEntity = reviewRepository.findById(passwordRequestDto.getId())
+                .orElseThrow(()-> new TableException(ErrorCode.REVIEW_NOT_FOUND));
+
+        //패스워드 일치 여부
+        if (!passwordEncoder.matches(passwordRequestDto.getPassword(), reviewEntity.getPassword())){
+            throw new TableException(ErrorCode.INVALID_PASSWORD);
+        }
+        return true;
     }
 
 }
