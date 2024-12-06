@@ -168,14 +168,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public InfoUpdateDto infoUpdate(InfoUpdateDto infoUpdateDto) {
         // 현재 로그인한 사용자 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new TableException(ErrorCode.USER_NOT_AUTHENTICATED);
-        }
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        String loggedInUsername = authentication.getName(); // 현재 로그인한 사용자의 아이디
-
-        UsersEntity users = userRepository.findByUser(loggedInUsername)
+        UsersEntity users = userRepository.findByUser(userId)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 비밀번호 수정
