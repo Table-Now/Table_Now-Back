@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.wishlist.dto.WishListRequestDto;
 import zerobase.tableNow.domain.wishlist.service.WishListService;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/wishlist")
 @RequiredArgsConstructor
@@ -15,6 +18,7 @@ public class WishListController {
 
     private final WishListService wishListService;
 
+    //좋아요토글
     @PostMapping("/toggle")
     public ResponseEntity<String> toggleWishList(@RequestBody WishListRequestDto dto) {
         // 서비스 메서드 호출
@@ -24,6 +28,7 @@ public class WishListController {
         return ResponseEntity.ok("Success");
     }
 
+    //좋아요상황
     @GetMapping("/check")
     public ResponseEntity<Boolean> checkWishList(
             @RequestParam(name = "user") String user,
@@ -33,4 +38,9 @@ public class WishListController {
         return ResponseEntity.ok(isWished);
     }
 
+    //찜 목록
+    @GetMapping("/")
+    public ResponseEntity<List<WishListRequestDto>> wishList(@RequestParam(name = "user") String user){
+        return ResponseEntity.ok().body(wishListService.wishList(user));
+    }
 }

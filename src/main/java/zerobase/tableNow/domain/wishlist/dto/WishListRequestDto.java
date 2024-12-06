@@ -10,4 +10,5 @@ import lombok.*;
 public class WishListRequestDto {
     private String user;
     private String store;
+    private Long storeId;
 }
