@@ -6,9 +6,12 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.wishlist.entity.WishListEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface WishListRepository extends JpaRepository<WishListEntity, Long> {
     Optional<WishListEntity> findByUserAndStore(UsersEntity user, StoreEntity store);
+
+    List<WishListEntity> findByUser(UsersEntity user);
 }
