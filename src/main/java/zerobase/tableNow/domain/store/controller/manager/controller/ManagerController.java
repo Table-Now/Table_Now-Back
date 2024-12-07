@@ -24,7 +24,7 @@ public class ManagerController {
     }
 
     // 예약 정보 확인
-    @GetMapping("confirm/{store}")
+    @GetMapping("confirm")
     public ResponseEntity<List<ConfirmDto>> confirmList(@RequestParam(name = "store") String store) {
         List<ConfirmDto> confirmList = managerService.confirmList(store);
         return ResponseEntity.ok().body(confirmList);
