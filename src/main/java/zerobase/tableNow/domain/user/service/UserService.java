@@ -3,9 +3,11 @@ package zerobase.tableNow.domain.user.service;
 import org.springframework.http.ResponseEntity;
 import zerobase.tableNow.domain.user.dto.*;
 
+import java.util.Map;
+
 public interface UserService {
     //회원가입
-    RegisterDto register(RegisterDto registerDto);
+    //RegisterDto register(RegisterDto registerDto);
 
     //이메일 인증
     boolean emailAuth(String userId, String authKey);
@@ -21,8 +23,7 @@ public interface UserService {
 
     MyInfoDto myInfo(String user);
 
-    ResponseEntity<String> getKakaoUserInfo(String authorizationCode);
-
     // 회원 수정
     InfoUpdateDto infoUpdate(InfoUpdateDto infoUpdateDto);
+
 }

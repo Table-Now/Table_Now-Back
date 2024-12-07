@@ -5,16 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import zerobase.tableNow.components.MailComponents;
 import zerobase.tableNow.domain.constant.Status;
-import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.token.TokenProvider;
@@ -30,6 +30,7 @@ import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,49 +64,49 @@ public class UserServiceImpl implements UserService {
     }
 
     //회원가입
-    @Override
-    public RegisterDto register(RegisterDto registerDto) {
-        // 중복 체크
-        Optional<UsersEntity> optionalUsers = userRepository.findByUser(registerDto.getUser());
-        if (optionalUsers.isPresent()) {
-            UsersEntity existingUser = optionalUsers.get();
-            if (existingUser.getUserStatus() == Status.STOP) {
-                log.info("회원탈퇴한 ID 입니다. 다른 ID를 사용해주세요.");
-                throw new RuntimeException("회원탈퇴한 ID 입니다. 다른 ID를 사용해주세요.");
-            } else {
-                log.info("이미 존재하는 아이디 입니다.");
-                throw new RuntimeException("이미 존재하는 아이디 입니다.");
-            }
-        }
-
-        long emailCount = userRepository.countByEmail(registerDto.getEmail());
-        if (emailCount > 0) {
-            log.info("이미 존재하는 이메일 입니다.");
-            throw new RuntimeException("이미 존재하는 이메일 입니다.");
-        }
-
-        // DTO -> Entity 변환 및 저장
-        UsersEntity userEntity = userMapper.toEntity(registerDto);
-        UsersEntity savedEntity = userRepository.save(userEntity);
-
-        // EmailEntity 저장 (이메일 인증 관련)
-        EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setEmail(savedEntity);
-        emailEntity.setEmailAuthKey(UUID.randomUUID().toString());
-        emailRepository.save(emailEntity);
-
-        // 인증 메일 발송
-        String email = registerDto.getEmail();
-        String subject = "TableNow 이메일 인증";
-        String text = mailComponents.getEmailAuthTemplate(savedEntity.getUser(), emailEntity.getEmailAuthKey());
-
-        boolean sendResult = mailComponents.sendMail(email, subject, text);
-        if (!sendResult) {
-            log.error("회원가입 인증 메일 발송 실패");
-        }
-
-        return userMapper.toDto(savedEntity);
-    }
+//    @Override
+//    public RegisterDto register(RegisterDto registerDto) {
+//        // 중복 체크
+//        Optional<UsersEntity> optionalUsers = userRepository.findByUser(registerDto.getUser());
+//        if (optionalUsers.isPresent()) {
+//            UsersEntity existingUser = optionalUsers.get();
+//            if (existingUser.getUserStatus() == Status.STOP) {
+//                log.info("회원탈퇴한 ID 입니다. 다른 ID를 사용해주세요.");
+//                throw new RuntimeException("회원탈퇴한 ID 입니다. 다른 ID를 사용해주세요.");
+//            } else {
+//                log.info("이미 존재하는 아이디 입니다.");
+//                throw new RuntimeException("이미 존재하는 아이디 입니다.");
+//            }
+//        }
+//
+//        long emailCount = userRepository.countByEmail(registerDto.getEmail());
+//        if (emailCount > 0) {
+//            log.info("이미 존재하는 이메일 입니다.");
+//            throw new RuntimeException("이미 존재하는 이메일 입니다.");
+//        }
+//
+//        // DTO -> Entity 변환 및 저장
+//        UsersEntity userEntity = userMapper.toEntity(registerDto);
+//        UsersEntity savedEntity = userRepository.save(userEntity);
+//
+//        // EmailEntity 저장 (이메일 인증 관련)
+//        EmailEntity emailEntity = new EmailEntity();
+//        emailEntity.setEmail(savedEntity);
+//        emailEntity.setEmailAuthKey(UUID.randomUUID().toString());
+//        emailRepository.save(emailEntity);
+//
+//        // 인증 메일 발송
+//        String email = registerDto.getEmail();
+//        String subject = "TableNow 이메일 인증";
+//        String text = mailComponents.getEmailAuthTemplate(savedEntity.getUser(), emailEntity.getEmailAuthKey());
+//
+//        boolean sendResult = mailComponents.sendMail(email, subject, text);
+//        if (!sendResult) {
+//            log.error("회원가입 인증 메일 발송 실패");
+//        }
+//
+//        return userMapper.toDto(savedEntity);
+//    }
 
     //이메일 인증
     @Transactional
@@ -257,27 +258,6 @@ public class UserServiceImpl implements UserService {
                     .phone(userEntity.getPhone())
                     .createAt(userEntity.getCreateAt())
                     .build();
-        }
-
-        public ResponseEntity<String> getKakaoUserInfo (String authorizationCode){
-            String tokenUrl = "https://kauth.kakao.com/oauth/token";
-            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            params.add("grant_type", "authorization_code");
-            params.add("client_id", clientId);
-            params.add("redirect_uri", redirectUri);
-            params.add("code", authorizationCode);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUrl, request, String.class);
-
-            log.info(String.valueOf(response));
-
-            return response; // 사용자 정보 반환
         }
 
 }

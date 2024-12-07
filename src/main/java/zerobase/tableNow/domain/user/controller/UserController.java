@@ -17,17 +17,17 @@ import java.util.Map;
 public class UserController {
     private  final UserService userService;
 
-    /**
-     * 회원 가입
-     * @param registerDto 회원가입 요청 데이터
-     * @return 회원 정보
-     */
-    @PostMapping("register")
-    public ResponseEntity<String> register(
-            @RequestBody RegisterDto registerDto){
-        userService.register(registerDto);
-        return ResponseEntity.ok("회원가입이 완료되었습니다.");
-    }
+//    /**
+//     * 회원 가입
+//     * @param registerDto 회원가입 요청 데이터
+//     * @return 회원 정보
+//     */
+//    @PostMapping("register")
+//    public ResponseEntity<String> register(
+//            @RequestBody RegisterDto registerDto){
+//        userService.register(registerDto);
+//        return ResponseEntity.ok("회원가입이 완료되었습니다.");
+//    }
 
     // 이메일 인증
     @GetMapping("email-auth")
@@ -80,10 +80,5 @@ public class UserController {
         return ResponseEntity.ok().body(userService.myInfo(user));
     }
 
-    //카카오 로그인
-    @GetMapping("/kakao/login")
-    public ResponseEntity<String> kakaoLogin(@RequestParam("code") String authorizationCode) {
-        return userService.getKakaoUserInfo(authorizationCode);
-    }
 }
 
