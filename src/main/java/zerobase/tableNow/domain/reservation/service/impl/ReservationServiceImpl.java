@@ -80,12 +80,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     @Override
     public void delete(Long id) {
-        //예약 엔티티 조회
-        ReservationEntity reservationEntity = reservationRepository.findById(id)
-                        .orElseThrow(()-> new TableException(ErrorCode.RESERVATION_NOT_FOUND));
+        StoreEntity storeId = storeRepository.findById(id)
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        ReservationEntity reservationEntities = reservationRepository.findByStoreStore(storeId.getStore());
 
         // 해당 예약의 상점 정보 조회
-        StoreEntity store = reservationEntity.getStore();
+        StoreEntity store = reservationEntities.getStore();
 
         //해당 상점에서 '진행 중'인 대기팀 수 확인
         long remainingReservations = reservationRepository
