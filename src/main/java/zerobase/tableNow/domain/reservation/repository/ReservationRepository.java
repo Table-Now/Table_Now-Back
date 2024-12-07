@@ -30,5 +30,6 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     long countByStoreAndReservationStatus(StoreEntity store, Status status);
 
     List<ReservationEntity> findByStore_Store(String store);
+  
     ReservationEntity findByStoreStore(String store);
 }
