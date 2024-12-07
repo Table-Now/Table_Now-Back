@@ -1,6 +1,7 @@
 package zerobase.tableNow.domain.wishlist.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import zerobase.tableNow.domain.reservation.dto.ReservationDto;
@@ -9,6 +10,7 @@ import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.domain.wishlist.dto.WishListRequestDto;
+import zerobase.tableNow.domain.wishlist.dto.WishListStoreListDto;
 import zerobase.tableNow.domain.wishlist.entity.WishListEntity;
 import zerobase.tableNow.domain.wishlist.repository.WishListRepository;
 import zerobase.tableNow.domain.wishlist.service.WishListService;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WishListServiceImpl implements WishListService {
     private final UserRepository usersRepository;
     private final StoreRepository storeRepository;
@@ -64,7 +67,7 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public List<WishListRequestDto> wishList(String user) {
+    public List<WishListStoreListDto> wishList(String user) {
         // 현재 로그인한 사용자 정보 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -75,15 +78,15 @@ public class WishListServiceImpl implements WishListService {
         // 유저의 찜 목록을 리스트로 조회 (userId를 기준으로 조회)
         List<WishListEntity> wishListEntities = wishListRepository.findByUser(users);
 
-        List<WishListRequestDto> wishListDtos = wishListEntities.stream()
-                .map(wishListEntity -> new WishListRequestDto(
-                        wishListEntity.getUser().getUser(),
+        List<WishListStoreListDto> wishListDtos = wishListEntities.stream()
+                .map(wishListEntity -> new WishListStoreListDto(
+                        wishListEntity.getUser().getId(),
+                        wishListEntity.getStore().getId(),
                         wishListEntity.getStore().getStore(),
-                        wishListEntity.getStore().getId()
+                        wishListEntity.getStore().getStoreImg()
                 ))
                 .collect(Collectors.toList());
 
-        // 리스트로 반환
         return wishListDtos;
     }
 
