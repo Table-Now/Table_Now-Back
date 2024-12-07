@@ -84,16 +84,6 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         ReservationEntity reservationEntities = reservationRepository.findByStoreStore(storeId.getStore());
-        log.info("예약 엔티티 개수 조회 성공 - 상점: {}", storeId.getStore());
-//
-//        if (reservationEntities.isEmpty()) {
-//            log.error("예약 엔티티 없음 - 상점: {}", storeId.getStore());
-//            throw new TableException(ErrorCode.RESERVATION_NOT_FOUND);
-//        }
-//
-//        // 첫 번째 예약 엔티티 선택
-//        ReservationEntity reservationEntity = reservationEntities.get(0);
-//        log.info("첫 번째 예약 엔티티 선택 - ID: {}", reservationEntity.getId());
 
         // 해당 예약의 상점 정보 조회
         StoreEntity store = reservationEntities.getStore();
