@@ -69,7 +69,7 @@ public class ManagerServiceImpl implements ManagerService {
              storeRepository.findByStore(store)
                     .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-            List<ReservationEntity> reservationEntity = reservationRepository.findByStore(store);
+            List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
 
             // 대기번호가 부여된 예약만 필터링하고, 대기번호를 기준으로 오름차순 정렬
             List<ConfirmDto> confirmDtoList = reservationEntity.stream()
