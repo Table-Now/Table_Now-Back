@@ -24,12 +24,16 @@ public class UsersEntity extends BaseEntity {
     private String user;
     private String name;
     private String password;
-    @Column(unique = true)
+
+
     private String email;
     private String phone;
 
     @Enumerated(EnumType.STRING) // 또는 EnumType.ORDINAL
     private Role role; //사용자 타입
     private Status userStatus; //이용가능한 상태, 정지상태
+
+    private String accessToken;
+    private String refreshToken;
 
 }

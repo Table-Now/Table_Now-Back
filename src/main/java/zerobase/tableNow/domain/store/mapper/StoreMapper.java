@@ -7,10 +7,9 @@ import zerobase.tableNow.domain.user.entity.UsersEntity;
 
 @Component
 public class StoreMapper {
-    public StoreEntity toStoreEntity(StoreDto storeDto, UsersEntity optionalUsers) {
+    public StoreEntity toStoreEntity(StoreDto storeDto) {
         //상점등록 DTO -> Entity
         return StoreEntity.builder()
-                .user(optionalUsers)
                 .store(storeDto.getStore())
                 .storeLocation(storeDto.getStoreLocation())
                 .storeImg(storeDto.getStoreImg())

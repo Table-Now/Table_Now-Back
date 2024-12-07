@@ -42,8 +42,8 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreDto register(StoreDto storeDto, MultipartFile image) {
 
-        UsersEntity optionalUsers = userRepository.findByUser(storeDto.getUser())
-                .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
+//        UsersEntity optionalUsers = userRepository.findByUser(storeDto.getUser())
+//                .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
         Optional<StoreEntity> optionalStoreEntity = storeRepository.findByStore(storeDto.getStore());
 
         if (optionalStoreEntity.isPresent()){
@@ -66,7 +66,7 @@ public class StoreServiceImpl implements StoreService {
         }
 
         // DTO -> Entity 변환 및 저장
-        StoreEntity storeEntity = storeMapper.toStoreEntity(storeDto, optionalUsers);
+        StoreEntity storeEntity = storeMapper.toStoreEntity(storeDto);
         StoreEntity saveEntity = storeRepository.save(storeEntity);
 
         return storeMapper.toStoreDto(saveEntity);
