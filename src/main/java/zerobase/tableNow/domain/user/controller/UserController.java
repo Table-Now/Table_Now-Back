@@ -2,7 +2,6 @@ package zerobase.tableNow.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.user.dto.*;
@@ -49,17 +48,17 @@ public class UserController {
     }
 
     //로그인
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        try {
-            // 로그인 성공 시 JWT 토큰 포함된 LoginDto 반환
-            LoginDto responseDto = userService.login(loginDto);
-            return ResponseEntity.ok(responseDto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("로그인 실패: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+//        try {
+//            // 로그인 성공 시 JWT 토큰 포함된 LoginDto 반환
+//            LoginDto responseDto = userService.login(loginDto);
+//            return ResponseEntity.ok(responseDto);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body("로그인 실패: " + e.getMessage());
+//        }
+//    }
 
     //회원 수정
     @PatchMapping("infoupdate")

@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import zerobase.tableNow.domain.constant.Role;
+import zerobase.tableNow.domain.token.TokenProvider;
 import zerobase.tableNow.domain.user.dto.KakaoLoginResponse;
+import zerobase.tableNow.domain.user.dto.LoginDto;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.domain.user.service.KakaoService;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class KakaoServicelmpl implements KakaoService {
 
     private final UserRepository userRepository;
+    private final TokenProvider tokenProvider;
 
     @Value("${security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -40,17 +44,22 @@ public class KakaoServicelmpl implements KakaoService {
         // 2. getKakaoAccessToken 메소드에 code를 매개변수로 넘겨주고 카카오 측으로 요청
         Map<String, String> tokenResponse = getKakaoAccessToken(authorizationCode);
         // 4. 요청받은 정보에서 토큰을 꺼냄
-        String accessToken = tokenResponse.get("access_token");
-        String refreshToken = tokenResponse.get("refresh_token");
+        String kakaoAccessToken = tokenResponse.get("access_token");
+        String kakaoRefreshToken = tokenResponse.get("refresh_token");
 
         // 5. 꺼내온 accessToken에서 email을 추츨하기 위한 getKakaoUserEmail 메소드 활용
-        String userEmail = getKakaoUserEmail(accessToken);
+        String userEmail = getKakaoUserEmail(kakaoAccessToken);
+        String user = userEmail.split("@")[0];
+
+        LoginDto loginDto = new LoginDto(user, Role.USER);
+
+        String jwtToken = tokenProvider.generateAccessToken(loginDto);
 
         // 7. 회원테이블에 카카오로 로그인한 정보를 저장
-        findOrCreateUser(userEmail, accessToken, refreshToken);
+        findOrCreateUser(userEmail, kakaoAccessToken, kakaoRefreshToken, user);
 
         // 9. 토큰과 이메일 응답
-        return new KakaoLoginResponse(accessToken, userEmail);
+        return new KakaoLoginResponse(kakaoAccessToken, jwtToken);
     }
 
     /**
@@ -88,14 +97,14 @@ public class KakaoServicelmpl implements KakaoService {
 
     /**
      * 6. 받은 토큰으로 이메일 추출
-     * @param accessToken accessToken
+     * @param kakaoAccessToken kakaoAccessToken
      * @return 이메일(userEmail)
      */
-    public String getKakaoUserEmail(String accessToken) {
+    public String getKakaoUserEmail(String kakaoAccessToken) {
         String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Authorization", "Bearer " + kakaoAccessToken);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
@@ -119,18 +128,25 @@ public class KakaoServicelmpl implements KakaoService {
     /**
      * 8. 회원 테이블에 빌드하여 저장
      * @param userEmail userEmail
-     * @param accessToken accessToken
-     * @param refreshToken refreshToken
+     * @param kakaoAccessToken kakaoAccessToken
+     * @param kakaoRefreshToken kakaoRefreshToken
      * @return 회원 저장
      */
-    private UsersEntity findOrCreateUser(String userEmail, String accessToken, String refreshToken) {
+    private UsersEntity findOrCreateUser(
+            String userEmail,
+            String kakaoAccessToken,
+            String kakaoRefreshToken,
+            String user
+    ) {
         return userRepository.findByEmail(userEmail)
                 .orElseGet(() -> {
                     log.info("No existing user found, creating new user with email: {}", userEmail);
                     UsersEntity newUser = UsersEntity.builder()
                             .email(userEmail)
-                            .accessToken(accessToken)
-                            .refreshToken(refreshToken)
+                            .user(user)
+                            .kakaoAccessToken(kakaoAccessToken)
+                            .kakaoRefreshToken(kakaoRefreshToken)
+                            .role(Role.USER)
                             .build();
                     return userRepository.save(newUser);
                 });

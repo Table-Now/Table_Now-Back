@@ -32,8 +32,8 @@ public class KakaoController {
 
             // Prepare response
             Map<String, String> response = new HashMap<>();
-            response.put("accessToken", loginResponse.getAccessToken());
-            response.put("email", loginResponse.getEmail());
+            response.put("kakaoAccessToken", loginResponse.getKakaoAccessToken());
+            response.put("jwtToken", loginResponse.getJwtToken());
 
             log.info(response.toString());
 
