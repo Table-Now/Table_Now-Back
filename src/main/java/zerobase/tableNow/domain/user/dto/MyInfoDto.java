@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MyInfoDto {
     private String user;
-    private String name;
+//    private String name;
     private String email;
-    private String phone;
+//    private String phone;
     private LocalDateTime createAt;
 }

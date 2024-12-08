@@ -139,7 +139,15 @@ public class KakaoServicelmpl implements KakaoService {
             String user
     ) {
         return userRepository.findByEmail(userEmail)
+                .map(existingUser -> {
+                    // 기존 회원 정보가 있는 경우 토큰을 업데이트
+                    log.info("Existing user found, updating tokens for email: {}", userEmail);
+                    existingUser.setKakaoAccessToken(kakaoAccessToken);
+                    existingUser.setKakaoRefreshToken(kakaoRefreshToken);
+                    return userRepository.save(existingUser);
+                })
                 .orElseGet(() -> {
+                    // 회원 정보가 없으면 새로운 유저 생성
                     log.info("No existing user found, creating new user with email: {}", userEmail);
                     UsersEntity newUser = UsersEntity.builder()
                             .email(userEmail)
@@ -151,6 +159,7 @@ public class KakaoServicelmpl implements KakaoService {
                     return userRepository.save(newUser);
                 });
     }
+
 
     /**
      * 카카오 로그아웃

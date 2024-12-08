@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import zerobase.tableNow.domain.reservation.dto.ReservationDto;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
@@ -17,9 +16,7 @@ import zerobase.tableNow.domain.wishlist.service.WishListService;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
