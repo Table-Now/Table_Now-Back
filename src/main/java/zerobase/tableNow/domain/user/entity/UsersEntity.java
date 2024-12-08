@@ -33,7 +33,7 @@ public class UsersEntity extends BaseEntity {
     private Role role; //사용자 타입
     private Status userStatus; //이용가능한 상태, 정지상태
 
-    private String accessToken;
-    private String refreshToken;
+    private String kakaoAccessToken;
+    private String kakaoRefreshToken;
 
 }

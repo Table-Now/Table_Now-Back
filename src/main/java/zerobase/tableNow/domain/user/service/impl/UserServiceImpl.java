@@ -137,33 +137,33 @@ public class UserServiceImpl implements UserService {
     }
 
     //로그인
-    @Override
-    public LoginDto login(LoginDto loginDto) {
-        // 1. 먼저 사용자 찾기
-        UsersEntity user = findUserByIdOrThrow(loginDto.getUser());
-
-        // 2. 비밀번호 확인
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 3. 사용자 상태 확인
-        if(user.getUserStatus() == Status.STOP) {
-            throw new RuntimeException("해당 ID가 없습니다.");
-        }
-
-        EmailEntity emailAuth = emailRepository.findByEmailEmail(user.getEmail())
-                .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
-        if(!emailAuth.isEmailAuthYn()) {
-            throw new RuntimeException("가입 하신 이메일로 인증을 완료해주세요.");
-        }
-
-        // 5. 로그인 성공 처리
-        LoginDto responseDto = userMapper.toLoginDto(user);
-        String accessToken = tokenProvider.generateAccessToken(responseDto);
-        responseDto.setToken(accessToken);
-        return responseDto;
-    }
+//    @Override
+//    public LoginDto login(LoginDto loginDto) {
+//        // 1. 먼저 사용자 찾기
+//        UsersEntity user = findUserByIdOrThrow(loginDto.getUser());
+//
+//        // 2. 비밀번호 확인
+//        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+//            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+//        }
+//
+//        // 3. 사용자 상태 확인
+//        if(user.getUserStatus() == Status.STOP) {
+//            throw new RuntimeException("해당 ID가 없습니다.");
+//        }
+//
+//        EmailEntity emailAuth = emailRepository.findByEmailEmail(user.getEmail())
+//                .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
+//        if(!emailAuth.isEmailAuthYn()) {
+//            throw new RuntimeException("가입 하신 이메일로 인증을 완료해주세요.");
+//        }
+//
+//        // 5. 로그인 성공 처리
+//        LoginDto responseDto = userMapper.toLoginDto(user);
+//        String accessToken = tokenProvider.generateAccessToken(responseDto);
+//        responseDto.setToken(accessToken);
+//        return responseDto;
+//    }
 
     // 회원 수정
     @Override
