@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import zerobase.tableNow.domain.token.TokenProvider;
+import zerobase.tableNow.security.JwtAuthenticationFilter;
 import zerobase.tableNow.security.KakaoAccessTokenAuthenticationFilter;
 
 import java.util.Arrays;
@@ -52,8 +53,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-//                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-                .addFilterBefore(accessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 카카오 액세스 토큰 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(accessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 카카오 액세스 토큰 필터 추가
 
 
         return http.build();

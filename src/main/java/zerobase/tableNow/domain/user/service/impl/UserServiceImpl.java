@@ -253,9 +253,9 @@ public class UserServiceImpl implements UserService {
 
             return MyInfoDto.builder()
                     .user(userEntity.getUser())
-                    .name(userEntity.getName())
+//                    .name(userEntity.getName())
                     .email(userEntity.getEmail())
-                    .phone(userEntity.getPhone())
+//                    .phone(userEntity.getPhone())
                     .createAt(userEntity.getCreateAt())
                     .build();
         }
