@@ -1,12 +1,18 @@
 package zerobase.tableNow.domain.store.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
 import org.joda.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +23,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "store")
-public class StoreEntity extends BaseEntity {
+public class StoreEntity extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,6 +55,4 @@ public class StoreEntity extends BaseEntity {
     @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
 
-    private Boolean isQueueRestricted;  // 줄서기 금지 상태
-    private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 }

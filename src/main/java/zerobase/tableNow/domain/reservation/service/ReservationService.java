@@ -11,7 +11,7 @@ public interface ReservationService {
     ReservationDto request(ReservationDto reservationDto);
 
     //예약취소
-    void delete(Long id);
+    void delete(String store);
 
     //예약 확정
     ApprovalDto approve(String phone);
