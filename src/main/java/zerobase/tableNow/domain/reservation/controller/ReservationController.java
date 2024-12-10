@@ -27,8 +27,8 @@ public class ReservationController {
 
     //예약 취소
     @DeleteMapping("delete")
-    public ResponseEntity<Void> delete(@RequestParam("id") Long id){
-        reservationService.delete(id);
+    public ResponseEntity<Void> delete(@RequestParam("store") String store){
+        reservationService.delete(store);
         return ResponseEntity.noContent().build();
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDateTime;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.tableNow.components.MailComponents;
@@ -81,26 +82,17 @@ public class ReservationServiceImpl implements ReservationService {
     //예약 취소
     @Transactional
     @Override
-    public void delete(Long id) {
-        StoreEntity storeId = storeRepository.findById(id)
-                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+    public void delete(String store) {
+        // 현재 로그인한 사용자 정보 가져오기
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        ReservationEntity reservationEntities = reservationRepository.findByStoreStore(storeId.getStore());
+        ReservationEntity reservation = reservationRepository.findByUser_User(userId);
 
-        // 해당 예약의 상점 정보 조회
-        StoreEntity store = reservationEntities.getStore();
-
-        //해당 상점에서 '진행 중'인 대기팀 수 확인
-        long remainingReservations = reservationRepository
-                .countByStoreAndReservationStatus(store, Status.ING);
-
-        if (remainingReservations == 2){
-            store.setIsQueueRestricted(true);
-            store.setQueueRestrictionEndTime(LocalDateTime.now().plusDays(2));  // 2일 후에 금지 해제
-            storeRepository.save(store);
+        if (reservation.getStore().getStore().equals(store)) {
+            // 상점이 동일하면 예약 삭제
+            reservationRepository.delete(reservation);
         }
 
-        reservationRepository.deleteById(id);
     }
 
     // 예약확정

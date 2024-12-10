@@ -18,10 +18,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class StoreDto implements Serializable {
-
-    // 클래스의 구조가 변경되어도 이전 버전과 호환 가능
-    private static final long serialVersionUID = 1L;
-
     private Long id;
     private String user; //상점 담당매니저
     private String store;// 상점 이름
@@ -46,4 +42,5 @@ public class StoreDto implements Serializable {
     private double latitude;  // 위도 추가
     private double longitude; // 경도 추가
     private Double distance; // 거리 정보를 저장할 필드 추가
+
 }

@@ -2,11 +2,10 @@ package zerobase.tableNow.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.joda.time.LocalDateTime;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
-
-import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
@@ -31,6 +30,9 @@ public class UsersEntity extends BaseEntity {
 
     private String kakaoAccessToken;
     private String kakaoRefreshToken;
+
+    private Boolean isQueueRestricted;  // 줄서기 금지 상태
+    private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 
 
 //    private String name;
