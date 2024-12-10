@@ -8,5 +8,5 @@ import lombok.Getter;
 public class KakaoLoginResponse {
     private String kakaoAccessToken;
 //    private String email;
-private String jwtToken;
+    private String jwtToken;
 }

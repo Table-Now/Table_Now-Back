@@ -23,7 +23,7 @@ public class ReviewEntity extends BaseEntity {
     private String store; // 상점
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user")
     private UsersEntity user;
 
     private String contents; // 리뷰내용

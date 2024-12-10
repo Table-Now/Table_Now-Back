@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
 @Data
 public class RegisterDto {
     private String user;
-    private String name;
-    private String password;
     private String email;
-    private String phone;
 
     @Enumerated(EnumType.STRING)
     private Role role; //사용자타입
-
     private Status userStatus; //이용가능한 상태, 정지상태
+
+//    private String name;
+//    private String password;
+//    private String phone;
 }

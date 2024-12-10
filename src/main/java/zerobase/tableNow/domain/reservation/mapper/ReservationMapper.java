@@ -15,7 +15,7 @@ public class ReservationMapper {
         //예약 요청 DTO -> Entity
         return ReservationEntity.builder()
                 .user(optionalUsers)
-                .phone(optionalUsers.getPhone())
+//                .phone(optionalUsers.getPhone())
                 .store(optionalStore)
                 .peopleNb(reservationDto.getPeopleNb())
                 .reservationStatus(Status.ING)

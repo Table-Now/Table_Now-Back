@@ -10,6 +10,8 @@ import zerobase.tableNow.domain.constant.Role;
 @Setter
 public class LoginDto {
     private String user;
-//    private String token;
     private Role role;
+    private String phone;
+
+    //    private String token;
 }

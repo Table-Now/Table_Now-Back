@@ -1,7 +1,15 @@
 package zerobase.tableNow.domain.store.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -9,7 +17,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StoreDto{
+public class StoreDto implements Serializable {
+
+    // 클래스의 구조가 변경되어도 이전 버전과 호환 가능
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String user; //상점 담당매니저
     private String store;// 상점 이름
@@ -20,7 +32,15 @@ public class StoreDto{
     private String storeOpen;
     private String storeClose;
     private String storeWeekOff; //상점 휴무날
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @CreatedDate
     private LocalDateTime createAt; //상점등록일
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @LastModifiedDate
     private LocalDateTime updateAt; //상점정보 업데이트일
 
     private double latitude;  // 위도 추가

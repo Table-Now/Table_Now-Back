@@ -2,9 +2,13 @@ package zerobase.tableNow.domain.store.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.components.S3UploadComponents;
+import zerobase.tableNow.config.redis.CustomCacheManager;
+import zerobase.tableNow.config.redis.RedisConfig;
 import zerobase.tableNow.domain.constant.SortType;
 import zerobase.tableNow.domain.store.dto.StoreDto;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -14,13 +18,15 @@ import zerobase.tableNow.domain.store.service.LocationService;
 import zerobase.tableNow.domain.store.service.StoreService;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
+import zerobase.tableNow.exception.TableException;
+import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.io.IOException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,7 +39,7 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final LocationService locationService;
     private final S3UploadComponents s3UploadComponents;
-
+    private final CustomCacheManager customCacheManager;
     /**
      * 상점등록
      * @param storeDto
@@ -41,9 +47,13 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public StoreDto register(StoreDto storeDto, MultipartFile image) {
+        UsersEntity users = userRepository.findByUser(storeDto.getUser())
+                .orElseThrow(()-> new TableException((ErrorCode.USER_NOT_FOUND)));
 
-//        UsersEntity optionalUsers = userRepository.findByUser(storeDto.getUser())
-//                .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
+        if (users.getPhone().isEmpty()){
+            throw new TableException(ErrorCode.INTERNAL_SERVER_ERROR,"전화번호를 등록해주세요.");
+        }
+
         Optional<StoreEntity> optionalStoreEntity = storeRepository.findByStore(storeDto.getStore());
 
         if (optionalStoreEntity.isPresent()){
@@ -66,7 +76,7 @@ public class StoreServiceImpl implements StoreService {
         }
 
         // DTO -> Entity 변환 및 저장
-        StoreEntity storeEntity = storeMapper.toStoreEntity(storeDto);
+        StoreEntity storeEntity = storeMapper.toStoreEntity(storeDto,users);
         StoreEntity saveEntity = storeRepository.save(storeEntity);
 
         return storeMapper.toStoreDto(saveEntity);

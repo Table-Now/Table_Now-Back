@@ -1,10 +1,6 @@
 package zerobase.tableNow.domain.store.controller.manager.dto;
 
 import lombok.*;
-import zerobase.tableNow.domain.constant.Status;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Getter
 @Setter

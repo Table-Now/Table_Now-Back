@@ -23,7 +23,7 @@ public class StoreEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user")
     private UsersEntity user;
 
     private String store;
