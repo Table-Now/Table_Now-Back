@@ -3,12 +3,13 @@ package zerobase.tableNow.domain.store.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+//import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.components.S3UploadComponents;
-import zerobase.tableNow.config.redis.CustomCacheManager;
-import zerobase.tableNow.config.redis.RedisConfig;
+//import zerobase.tableNow.config.redis.CustomCacheManager;
+//import zerobase.tableNow.config.redis.RedisConfig;
 import zerobase.tableNow.domain.constant.SortType;
 import zerobase.tableNow.domain.store.dto.StoreDto;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -39,7 +40,7 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final LocationService locationService;
     private final S3UploadComponents s3UploadComponents;
-    private final CustomCacheManager customCacheManager;
+//    private final CustomCacheManager customCacheManager;
     /**
      * 상점등록
      * @param storeDto
@@ -90,8 +91,13 @@ public class StoreServiceImpl implements StoreService {
      * @param userLon
      * @return 필터를 통한 상점 목록 반환
      */
-    @Override
-    public List<StoreDto> getAllStores(String keyword, SortType sortType, Double userLat, Double userLon) {
+    @Cacheable(value = "stores", key = "#root.method.name + #keyword + #sortType + #userLat + #userLon")
+    public List<StoreDto> getAllStores(
+            String keyword,
+            SortType sortType,
+            Double userLat,
+            Double userLon
+    ) {
         List<StoreEntity> storeEntities;
 
         // 기본 데이터 조회
@@ -104,14 +110,13 @@ public class StoreServiceImpl implements StoreService {
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         String todayInKorean = convertDayOfWeekToKorean(today);
 
-        // storeWeekOff와 현재 요일을 비교하여 해당 요일이 휴무일인 상점 제외
+        // 휴무일 필터링
         storeEntities = storeEntities.stream()
                 .filter(store -> store.getStoreWeekOff() == null || !store.getStoreWeekOff().contains(todayInKorean))
                 .collect(Collectors.toList());
 
         // 거리 계산 및 정렬
         if (SortType.DISTANCE.equals(sortType) && userLat != null && userLon != null) {
-            // 각 상점의 거리를 계산하고 정렬
             storeEntities.forEach(store -> {
                 double distance = calculateDistance(
                         userLat, userLon,

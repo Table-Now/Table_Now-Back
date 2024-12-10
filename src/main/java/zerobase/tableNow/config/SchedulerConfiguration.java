@@ -22,7 +22,7 @@ public class SchedulerConfiguration {
 
         log.info("대기번호 초기화 작업 시작");
         // ReservationServiceImpl의 메서드를 호출하여 대기번호 초기화
-        reservationService.resetWaitingNumbers();
+//        reservationService.resetWaitingNumbers();
         log.info("대기번호 초기화 작업 완료");
     }
 

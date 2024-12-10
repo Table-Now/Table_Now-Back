@@ -13,7 +13,6 @@ public interface  StoreService {
     StoreDto register(StoreDto storeDto, MultipartFile image);
 
     //상점 목록
-//    List<StoreDto> getAllStores(String keyword, SortType sortType);
     List<StoreDto> getAllStores(String keyword, SortType sortTypeEnum, Double userLat, Double userLon);
 
     //상점 수정
