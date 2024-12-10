@@ -35,7 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final MailComponents mailComponents;
     private final Queue<Integer> waitingNumberQueue;
-    private final RedisTemplate<String, Integer> redisTemplate;
+//    private final RedisTemplate<String, Integer> redisTemplate;
 
 
     private static final String WAITING_NUMBER_QUEUE = "waitingNumberQueue"; // Redis 키 이름
@@ -116,15 +116,15 @@ public class ReservationServiceImpl implements ReservationService {
         // 상태가 ING(진행 중)인 경우에만 대기번호를 부여
         if (reservationEntity.getReservationStatus() == Status.ING) {
             // 대기번호 부여 (Redis에서 큐를 꺼내고 대기번호 부여)
-            Integer waitingNumber = getNextWaitingNumber();
+            //Integer waitingNumber = getNextWaitingNumber();
 
             // 대기번호 설정
             reservationEntity.setReservationStatus(Status.STOP);
-            reservationEntity.setWaitingNumber(waitingNumber);  // 대기번호 설정
+            //reservationEntity.setWaitingNumber(waitingNumber);  // 대기번호 설정
             reservationRepository.save(reservationEntity);  // 변경된 상태 저장
 
             // ApprovalDto 응답 객체 생성
-            return new ApprovalDto("대기가 확정되었습니다. 대기번호 : " + waitingNumber);
+            return new ApprovalDto("대기가 확정되었습니다.");
         } else {
             // 이미 대기 상태가 아니면 예외 처리
             throw new RuntimeException("이미 대기 상태가 아닙니다");
@@ -134,26 +134,26 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * Redis에서 대기번호를 가져오고, 다음 대기번호를 반환하는 메소드
      */
-    private Integer getNextWaitingNumber() {
-        // Redis에서 대기번호 큐를 가져오고, 큐에서 하나씩 꺼내서 대기번호를 부여
-        Integer waitingNumber = redisTemplate.opsForList().rightPop(WAITING_NUMBER_QUEUE);
-        if (waitingNumber == null) {
-            waitingNumber = 1; // 큐가 비어있으면 대기번호 1부터 시작
-        }
-
-        // 다음 대기번호를 큐에 다시 추가
-        redisTemplate.opsForList().leftPush(WAITING_NUMBER_QUEUE, waitingNumber + 1);
-
-        return waitingNumber;
-    }
-
-    //대기번호 초기화
-    public void resetWaitingNumbers() {
-        // Redis 큐 초기화: 대기번호 1부터 시작
-        redisTemplate.delete(WAITING_NUMBER_QUEUE); // 기존 대기번호 큐 삭제
-        redisTemplate.opsForList().leftPush(WAITING_NUMBER_QUEUE, 1); // 첫 번째 대기번호를 1로 설정
-        log.info("대기번호가 초기화되었습니다.");
-    }
+//    private Integer getNextWaitingNumber() {
+//        // Redis에서 대기번호 큐를 가져오고, 큐에서 하나씩 꺼내서 대기번호를 부여
+//        Integer waitingNumber = redisTemplate.opsForList().rightPop(WAITING_NUMBER_QUEUE);
+//        if (waitingNumber == null) {
+//            waitingNumber = 1; // 큐가 비어있으면 대기번호 1부터 시작
+//        }
+//
+//        // 다음 대기번호를 큐에 다시 추가
+//        redisTemplate.opsForList().leftPush(WAITING_NUMBER_QUEUE, waitingNumber + 1);
+//
+//        return waitingNumber;
+//    }
+//
+//    //대기번호 초기화
+//    public void resetWaitingNumbers() {
+//        // Redis 큐 초기화: 대기번호 1부터 시작
+//        redisTemplate.delete(WAITING_NUMBER_QUEUE); // 기존 대기번호 큐 삭제
+//        redisTemplate.opsForList().leftPush(WAITING_NUMBER_QUEUE, 1); // 첫 번째 대기번호를 1로 설정
+//        log.info("대기번호가 초기화되었습니다.");
+//    }
 
 
     // 사용자 상점 예약 리스트 목록
