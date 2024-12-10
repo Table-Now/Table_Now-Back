@@ -22,10 +22,6 @@ public class UsersEntity extends BaseEntity {
 
     @Column(unique = true)
     private String user;
-    private String name;
-    private String password;
-
-
     private String email;
     private String phone;
 
@@ -35,5 +31,9 @@ public class UsersEntity extends BaseEntity {
 
     private String kakaoAccessToken;
     private String kakaoRefreshToken;
+
+
+//    private String name;
+//    private String password;
 
 }

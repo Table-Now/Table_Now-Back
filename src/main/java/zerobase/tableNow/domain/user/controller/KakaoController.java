@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zerobase.tableNow.domain.user.dto.DeleteDto;
+import zerobase.tableNow.domain.user.dto.InfoUpdateDto;
 import zerobase.tableNow.domain.user.dto.KakaoLoginResponse;
+import zerobase.tableNow.domain.user.dto.MyInfoDto;
 import zerobase.tableNow.domain.user.service.KakaoService;
 
 import java.util.HashMap;
@@ -56,7 +59,38 @@ public class KakaoController {
         if (accessToken == null || accessToken.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
         }
-        // 서비스 로직 호출
         return kakaoService.kakaoLogout(accessToken);
     }
+
+    /**
+     * 회원수정
+     * @param dto phone
+     * @return 수정완료
+     */
+    @PatchMapping("infoupdate")
+    public ResponseEntity<InfoUpdateDto> infoUpdate(@RequestBody InfoUpdateDto dto) {
+        InfoUpdateDto updatedUser = kakaoService.infoUpdate(dto);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    /**
+     * 회원 정지
+     * @param user user
+     * @return user
+     */
+    @DeleteMapping("delete")
+    public ResponseEntity<DeleteDto> userDelete(@RequestParam(name = "user") String user){
+        return ResponseEntity.ok().body(kakaoService.userDelete(user));
+    }
+
+    /**
+     * 회원 정보 가져오기
+     * @param user user
+     * @return user
+     */
+    @GetMapping("/myinfo")
+    public ResponseEntity<MyInfoDto> myInfo(@RequestParam(name= "user") String user){
+        return ResponseEntity.ok().body(kakaoService.myInfo(user));
+    }
+
 }

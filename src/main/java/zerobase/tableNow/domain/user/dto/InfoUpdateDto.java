@@ -9,8 +9,5 @@ import zerobase.tableNow.domain.constant.Status;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InfoUpdateDto {
-    private String password;
-    private String email;
     private String phone;
-    private Status status;
 }

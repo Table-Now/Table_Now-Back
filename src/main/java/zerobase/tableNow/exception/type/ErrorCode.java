@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "비밀리뷰의 비밀번호는 4자리 숫자로 설정해야 합니다."),
     USER_STATUS_STOP(HttpStatus.FORBIDDEN, "해당 아이디가 탈퇴한 회원이거나 정지된 회원입니다."),
     EMAIL_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN, "가입하신 이메일로 인증을 완료해주세요."),
+    DELETE_USER(HttpStatus.BAD_REQUEST, "탈퇴한 계정입니다."),
 
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상점을 찾을 수 없습니다."),
     PRODUCT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "동일한 상점이 이미 존재합니다."),

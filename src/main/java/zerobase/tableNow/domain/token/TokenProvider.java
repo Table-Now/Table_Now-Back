@@ -32,6 +32,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .claim("user", dto.getUser())
                 .claim("role", dto.getRole())
+                .claim("phone",dto.getPhone())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS512)

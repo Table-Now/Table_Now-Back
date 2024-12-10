@@ -19,7 +19,7 @@ public class WishListEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user", nullable = false)
     private UsersEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)

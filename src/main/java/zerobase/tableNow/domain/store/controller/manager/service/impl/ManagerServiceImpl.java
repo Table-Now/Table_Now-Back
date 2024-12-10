@@ -18,9 +18,7 @@ import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +27,9 @@ public class ManagerServiceImpl implements ManagerService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final ReservationRepository reservationRepository;
+
+    // 대기번호 큐
+    private final Queue<Integer> waitingNumberQueue = new LinkedList<>();
 
     /**
      * 매니저 전용 상점 목록
@@ -64,26 +65,54 @@ public class ManagerServiceImpl implements ManagerService {
          * @param store
          * @return 본인 상점에 대한 예약정보
          */
-        @Override
-        public List<ConfirmDto> confirmList(String store) {
-             storeRepository.findByStore(store)
-                    .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+//        @Override
+//        public List<ConfirmDto> confirmList(String store) {
+//             storeRepository.findByStore(store)
+//                    .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+//
+//            List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
+//
+//            // 대기번호가 부여된 예약만 필터링하고, 대기번호를 기준으로 오름차순 정렬
+//            List<ConfirmDto> confirmDtoList = reservationEntity.stream()
+//                    .filter(reservation -> reservation.getWaitingNumber() != null) // 대기번호가 부여된 예약만 필터링
+//                    .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber)) // 대기번호 순으로 정렬
+//                    .map(reservation -> ConfirmDto.builder()
+//                            .store(reservation.getStore().getStore())
+//                            .phone(reservation.getPhone())
+//                            .peopleNb(reservation.getPeopleNb())
+//                            .waitingNumber(reservation.getWaitingNumber())
+//                            .build())
+//                    .collect(Collectors.toList());
+//
+//            return confirmDtoList;
+//        }
 
-            List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
+    /**
+     * 매니저가 대기자 목록을 확인하는 로직
+     * 대기번호 큐를 활용하여 대기중인 예약 목록을 확인
+     */
+    public List<ConfirmDto> getWaitingList(String store) {
+        storeRepository.findByStore(store)
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-            // 대기번호가 부여된 예약만 필터링하고, 대기번호를 기준으로 오름차순 정렬
-            List<ConfirmDto> confirmDtoList = reservationEntity.stream()
-                    .filter(reservation -> reservation.getWaitingNumber() != null) // 대기번호가 부여된 예약만 필터링
-                    .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber)) // 대기번호 순으로 정렬
-                    .map(reservation -> ConfirmDto.builder()
-                            .store(reservation.getStore().getStore())
-                            .phone(reservation.getPhone())
-                            .peopleNb(reservation.getPeopleNb())
-                            .waitingNumber(reservation.getWaitingNumber())
-                            .build())
-                    .collect(Collectors.toList());
+        // 대기번호 큐에 있는 대기자 번호들을 확인
+        List<Integer> waitingNumbers = new ArrayList<>(waitingNumberQueue);
 
-            return confirmDtoList;
-        }
-        //test
+        // 대기자 번호에 해당하는 예약을 찾기 위해 예약 목록을 조회
+        List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
+
+        // 대기자 번호를 기반으로 예약 정보를 필터링
+        List<ConfirmDto> waitingList = reservationEntity.stream()
+                .filter(reservation -> waitingNumbers.contains(reservation.getWaitingNumber()))
+                .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber)) // 대기번호 순으로 정렬
+                .map(reservation -> ConfirmDto.builder()
+                        .store(reservation.getStore().getStore())
+                        .phone(reservation.getPhone())
+                        .peopleNb(reservation.getPeopleNb())
+                        .waitingNumber(reservation.getWaitingNumber())
+                        .build())
+                .collect(Collectors.toList());
+
+        return waitingList;
+    }
 }
