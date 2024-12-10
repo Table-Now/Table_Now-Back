@@ -35,9 +35,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final MailComponents mailComponents;
     private final Queue<Integer> waitingNumberQueue;
-//    private final RedisTemplate<String, Integer> redisTemplate;
-
-
     private static final String WAITING_NUMBER_QUEUE = "waitingNumberQueue"; // Redis 키 이름
 
     /**

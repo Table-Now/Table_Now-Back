@@ -2,6 +2,7 @@ package zerobase.tableNow.domain.store.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,7 +86,7 @@ public class StoreServiceImpl implements StoreService {
      * @param userLon
      * @return 필터를 통한 상점 목록 반환
      */
-    @Cacheable(value = "stores", key = "'list_' + ( #keyword != null ? #keyword : 'null') " +
+    @CachePut(value = "stores", key = "'list_' + ( #keyword != null ? #keyword : 'null') " +
             "+ '_' + ( #sortType != null ? #sortType.name() : 'null') + '_' " +
             "+ ( #userLat != null ? #userLat.toString() : 'null') + '_' " +
             "+ ( #userLon != null ? #userLon.toString() : 'null')")
