@@ -52,9 +52,6 @@ dependencies {
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64'
 	testImplementation 'org.mockito:mockito-core:5.5.0'  // Mockito 의존성 추가 (최신 버전 사용)
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.data:spring-data-redis'
-
 }
 
 tasks.named('test') {

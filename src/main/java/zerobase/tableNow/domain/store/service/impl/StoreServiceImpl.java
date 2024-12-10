@@ -2,14 +2,10 @@ package zerobase.tableNow.domain.store.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-//import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.components.S3UploadComponents;
-//import zerobase.tableNow.config.redis.CustomCacheManager;
-//import zerobase.tableNow.config.redis.RedisConfig;
 import zerobase.tableNow.domain.constant.SortType;
 import zerobase.tableNow.domain.store.dto.StoreDto;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -27,7 +23,6 @@ import java.time.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,7 +35,6 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final LocationService locationService;
     private final S3UploadComponents s3UploadComponents;
-//    private final CustomCacheManager customCacheManager;
     /**
      * 상점등록
      * @param storeDto
@@ -91,7 +85,11 @@ public class StoreServiceImpl implements StoreService {
      * @param userLon
      * @return 필터를 통한 상점 목록 반환
      */
-    @Cacheable(value = "stores", key = "#root.method.name + #keyword + #sortType + #userLat + #userLon")
+    @Cacheable(value = "stores", key = "'list_' + ( #keyword != null ? #keyword : 'null') " +
+            "+ '_' + ( #sortType != null ? #sortType.name() : 'null') + '_' " +
+            "+ ( #userLat != null ? #userLat.toString() : 'null') + '_' " +
+            "+ ( #userLon != null ? #userLon.toString() : 'null')")
+
     public List<StoreDto> getAllStores(
             String keyword,
             SortType sortType,
@@ -107,6 +105,7 @@ public class StoreServiceImpl implements StoreService {
             storeEntities = storeRepository.findAll();
         }
 
+        //요일 필터링
         DayOfWeek today = LocalDate.now().getDayOfWeek();
         String todayInKorean = convertDayOfWeekToKorean(today);
 
