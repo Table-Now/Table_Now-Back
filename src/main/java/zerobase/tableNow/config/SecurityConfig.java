@@ -81,7 +81,8 @@ public class SecurityConfig {
                 "https://tablenow.org",
                 "https://www.tablenow.org",
                 "https://backend.tablenow.org",
-                "https://www.backend.tablenow.org"
+                "https://www.backend.tablenow.org",
+                "http://host.docker.internal:8080"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
