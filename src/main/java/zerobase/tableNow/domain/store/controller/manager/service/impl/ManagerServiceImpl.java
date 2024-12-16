@@ -1,15 +1,13 @@
 package zerobase.tableNow.domain.store.controller.manager.service.impl;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
 import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
 import zerobase.tableNow.domain.store.controller.manager.dto.ConfirmDto;
 import zerobase.tableNow.domain.store.controller.manager.dto.ManagerDto;
-import zerobase.tableNow.domain.store.controller.manager.repository.ManagerRepository;
 import zerobase.tableNow.domain.store.controller.manager.service.ManagerService;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
@@ -23,17 +21,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerServiceImpl implements ManagerService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final ReservationRepository reservationRepository;
 
-    // 대기번호 큐
-    private final Queue<Integer> waitingNumberQueue = new LinkedList<>();
-
     /**
      * 매니저 전용 상점 목록
-     * @param userId
+     * @param user user
      * @return 해당 본인 상점에 대한 목록 반환
      */
     @Override
@@ -60,51 +56,22 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
 
-        /**
-         * 매니저 전용 예약 정보 확인
-         * @param store
-         * @return 본인 상점에 대한 예약정보
-         */
-//        @Override
-//        public List<ConfirmDto> confirmList(String store) {
-//             storeRepository.findByStore(store)
-//                    .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
-//
-//            List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
-//
-//            // 대기번호가 부여된 예약만 필터링하고, 대기번호를 기준으로 오름차순 정렬
-//            List<ConfirmDto> confirmDtoList = reservationEntity.stream()
-//                    .filter(reservation -> reservation.getWaitingNumber() != null) // 대기번호가 부여된 예약만 필터링
-//                    .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber)) // 대기번호 순으로 정렬
-//                    .map(reservation -> ConfirmDto.builder()
-//                            .store(reservation.getStore().getStore())
-//                            .phone(reservation.getPhone())
-//                            .peopleNb(reservation.getPeopleNb())
-//                            .waitingNumber(reservation.getWaitingNumber())
-//                            .build())
-//                    .collect(Collectors.toList());
-//
-//            return confirmDtoList;
-//        }
-
     /**
-     * 매니저가 대기자 목록을 확인하는 로직
-     * 대기번호 큐를 활용하여 대기중인 예약 목록을 확인
+     * 매니저 전용 예약 정보 확인
+     * @param store store
+     * @return 본인 상점에 대한 예약정보
      */
+    @Transactional(readOnly = true)
     public List<ConfirmDto> getWaitingList(String store) {
-        storeRepository.findByStore(store)
-                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+        // Store 존재 여부 확인
+        storeRepository.findByStore(store).orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // 대기번호 큐에 있는 대기자 번호들을 확인
-        List<Integer> waitingNumbers = new ArrayList<>(waitingNumberQueue);
+        // 예약 목록 확인
+        List<ReservationEntity> reservationEntityList = reservationRepository.findByStore_Store(store);
 
-        // 대기자 번호에 해당하는 예약을 찾기 위해 예약 목록을 조회
-        List<ReservationEntity> reservationEntity = reservationRepository.findByStore_Store(store);
-
-        // 대기자 번호를 기반으로 예약 정보를 필터링
-        List<ConfirmDto> waitingList = reservationEntity.stream()
-                .filter(reservation -> waitingNumbers.contains(reservation.getWaitingNumber()))
-                .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber)) // 대기번호 순으로 정렬
+        // 매핑 및 반환
+        List<ConfirmDto> waitingList = reservationEntityList.stream()
+                .sorted(Comparator.comparingInt(ReservationEntity::getWaitingNumber))
                 .map(reservation -> ConfirmDto.builder()
                         .store(reservation.getStore().getStore())
                         .phone(reservation.getPhone())
@@ -115,4 +82,6 @@ public class ManagerServiceImpl implements ManagerService {
 
         return waitingList;
     }
+
+
 }
