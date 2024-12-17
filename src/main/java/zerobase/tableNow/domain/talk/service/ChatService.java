@@ -12,5 +12,4 @@ public interface ChatService {
     void handleUserLeave(String user);
 
     List<ChatMessageDto> getAllMessages();
-
 }

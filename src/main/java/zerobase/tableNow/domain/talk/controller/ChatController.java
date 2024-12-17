@@ -1,14 +1,15 @@
 package zerobase.tableNow.domain.talk.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import zerobase.tableNow.domain.talk.dto.ChatMessageDto;
+import zerobase.tableNow.domain.talk.repository.ChatRepository;
 import zerobase.tableNow.domain.talk.service.ChatService;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
+    private final ChatRepository chatRepository;
 
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
@@ -37,10 +39,10 @@ public class ChatController {
         return chatMessage;
     }
 
-    // Redis에서 모든 메시지를 가져오는 API
     @GetMapping("/chat/messages")
-    @ResponseBody
-    public List<ChatMessageDto> getAllMessages() {
-        return chatService.getAllMessages();
+    public ResponseEntity<List<ChatMessageDto>> getAllMessages() {
+        List<ChatMessageDto> messages = chatService.getAllMessages();
+        return ResponseEntity.ok(messages);
     }
+
 }
