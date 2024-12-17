@@ -207,7 +207,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreDto update(Long id, StoreDto storeDto) {
         StoreEntity storeUpdate = storeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 상점이 없습니다"));
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         UsersEntity currentUser = storeUpdate.getUser();
         storeUpdate.setUser(currentUser); // 기존 사용자 정보 유지
@@ -264,7 +264,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreDto detail(Long id) {
         StoreEntity storeDetail = storeRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("해당 상점이 없습니다."));
+                .orElseThrow(()-> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         return storeMapper.convertToDto(storeDetail);
     }

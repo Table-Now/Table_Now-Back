@@ -55,7 +55,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         if (!users.getPhone().equals(reservationDto.getPhone())) {
-            throw new RuntimeException("가입하신 번호와 다른 번호입니다. 확인해주세요");
+            throw new TableException(ErrorCode.USER_NOT_FOUND,"가입하신 번호와 다른 번호입니다. 확인해주세요");
         }
 
         StoreEntity store = storeRepository
@@ -104,7 +104,7 @@ public class ReservationServiceImpl implements ReservationService {
         try {
             // 해당 전화번호로 예약 엔티티를 조회
             ReservationEntity reservationEntity = reservationRepository.findByPhone(phone)
-                    .orElseThrow(() -> new RuntimeException("해당 번호가 없습니다."));
+                    .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND,"해당 번호가 없습니다."));
 
             // 상태가 ING(진행 중)인 경우에만 대기번호를 부여
             if (reservationEntity.getReservationStatus() == Status.ING) {
@@ -124,7 +124,7 @@ public class ReservationServiceImpl implements ReservationService {
                 return new ApprovalDto("대기가 확정되었습니다. 대기번호 : " + waitingNumber);
             } else {
                 // 이미 대기 상태가 아니면 예외 처리
-                throw new RuntimeException("이미 대기 상태가 아닙니다");
+                throw new TableException(ErrorCode.INVALID_REQUEST,"이미 대기 상태가 아닙니다");
             }
         } finally {
             lock.unlock();  // 락 해제

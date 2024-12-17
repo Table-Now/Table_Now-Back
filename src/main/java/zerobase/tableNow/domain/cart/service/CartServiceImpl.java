@@ -3,6 +3,8 @@ package zerobase.tableNow.domain.cart.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
+import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
 import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
 import zerobase.tableNow.domain.store.controller.menu.repository.MenuRepository;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -22,8 +24,9 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final ReservationRepository reservationRepository;
 
-    //포장 메뉴 등록
+    //장바구니 등록
     @Override
     public CartDto register(CartDto cartDto) {
         // 현재 로그인한 사용자 ID 가져오기
@@ -32,6 +35,15 @@ public class CartServiceImpl implements CartService {
         // 사용자 정보 조회
         UsersEntity userEntity = userRepository.findByUser(userId)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        // 해당 사용자의 예약 정보 조회
+        ReservationEntity reservationEntity = reservationRepository.findByPhone(userEntity.getPhone())
+                .orElseThrow(() -> new TableException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        // 대기번호가 부여된 상태인지 확인
+        if (reservationEntity.getWaitingNumber() == null) {
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS,"대기번호가 부여되지 않은 상태에서는 주문이 불가능합니다.");
+        }
 
         // 메뉴 및 매장 정보 조회
         MenuEntity menuEntity = menuRepository.findById(cartDto.getMenuId())

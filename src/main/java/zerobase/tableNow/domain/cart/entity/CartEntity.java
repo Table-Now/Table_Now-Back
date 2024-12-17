@@ -13,6 +13,7 @@ import zerobase.tableNow.domain.user.entity.UsersEntity;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "carts")
 public class CartEntity extends BaseEntity{
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
