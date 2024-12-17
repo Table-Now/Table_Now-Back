@@ -64,7 +64,7 @@ public class MenuServiceImpl implements MenuService{
 
     //메뉴 목록
     @Override
-    @Cacheable(value = "menuCache", key = "#storeId")
+//    @Cacheable(value = "menuCache", key = "#storeId")
     public List<MenuDto> list(Long storeId) {
         // 특정 storeId에 해당하는 메뉴 리스트 조회
         List<MenuEntity> menuEntities = menuRepository.findByStoreId_Id(storeId);
@@ -87,7 +87,7 @@ public class MenuServiceImpl implements MenuService{
     }
     //메뉴삭제
     @Override
-    @CacheEvict(value = "menuCache", key = "#storeId")
+//    @CacheEvict(value = "menuCache", key = "#storeId")
     public void delete(Long id) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -117,7 +117,7 @@ public class MenuServiceImpl implements MenuService{
     }
     //메뉴수정
     @Override
-    @CachePut(value = "menuCache", key = "#storeId")
+//    @CachePut(value = "menuCache", key = "#storeId")
     public void update(MenuUpdateDto menuUpdateDto) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -153,7 +153,7 @@ public class MenuServiceImpl implements MenuService{
 
     // 메뉴 수정 -> 상태수정 (매진여부)
     @Override
-    @CachePut(value = "menuCache", key = "#storeId")
+//    @CachePut(value = "menuCache", key = "#storeId")
     public void reStatus(Long menuId) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();

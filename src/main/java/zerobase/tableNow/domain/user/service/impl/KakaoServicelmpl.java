@@ -230,7 +230,7 @@ public class KakaoServicelmpl implements KakaoService {
      */
     private UsersEntity findUserByIdOrThrow(String user) {
         return userRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
     }
 
     /**
