@@ -31,6 +31,7 @@ public class StoreEntity extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private UsersEntity user;
+    private String phone;
 
     private String store;
     private String storeLocation;
