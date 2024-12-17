@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"내부 서버 오류가 발생했습니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST,"요청 데이터가 유효하지 않습니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"사용자를 찾을 수 없습니다."),
     USER_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN, "사용자가 인증되지 않았습니다. 로그인 후 다시 시도하세요"),
     USER_CANNOT_REGISTER_PRODUCT(HttpStatus.FORBIDDEN, "일반 사용자는 매장을 등록할 수 없습니다."),
@@ -19,6 +20,7 @@ public enum ErrorCode {
     DELETE_USER(HttpStatus.BAD_REQUEST, "탈퇴한 계정입니다."),
 
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상점을 찾을 수 없습니다."),
+    MENUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
     PRODUCT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "동일한 상점이 이미 존재합니다."),
 
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 예약을 찾을 수 없습니다."),

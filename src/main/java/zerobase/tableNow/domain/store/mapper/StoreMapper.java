@@ -11,6 +11,7 @@ public class StoreMapper {
         //상점등록 DTO -> Entity
         return StoreEntity.builder()
                 .user(users)
+                .phone(storeDto.getPhone())
                 .store(storeDto.getStore())
                 .storeLocation(storeDto.getStoreLocation())
                 .storeImg(storeDto.getStoreImg())
@@ -28,6 +29,7 @@ public class StoreMapper {
     public StoreDto toStoreDto(StoreEntity storeEntity) {
         return StoreDto.builder()
                 .user(storeEntity.getUser().getUser())
+                .phone(storeEntity.getPhone())
                 .store(storeEntity.getStore())
                 .storeLocation(storeEntity.getStoreLocation())
                 .storeImg(storeEntity.getStoreImg())
@@ -45,6 +47,7 @@ public class StoreMapper {
         return StoreDto.builder()
                 .id(storeEntity.getId())
                 .user(storeEntity.getUser().getUser())
+                .phone(storeEntity.getPhone())
                 .store(storeEntity.getStore())
                 .storeLocation(storeEntity.getStoreLocation())
                 .storeImg(storeEntity.getStoreImg())

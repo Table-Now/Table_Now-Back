@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class StoreDto implements Serializable {
     private Long id;
     private String user; //상점 담당매니저
+    private String phone;
     private String store;// 상점 이름
     private String storeLocation; //상점 장소
     private String storeImg; // 상점 이미지
