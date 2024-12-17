@@ -25,10 +25,10 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content; //내용
 
-    @Enumerated(EnumType.STRING)
-    private MessageType type;
-
-    public enum MessageType {
-        CHAT, JOIN, LEAVE
-    }
+//    @Enumerated(EnumType.STRING)
+//    private MessageType type;
+//
+//    public enum MessageType {
+//        CHAT, JOIN, LEAVE
+//    }
 }

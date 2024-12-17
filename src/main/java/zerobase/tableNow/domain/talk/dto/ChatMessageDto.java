@@ -12,13 +12,18 @@ import zerobase.tableNow.domain.talk.entity.ChatMessage;
 public class ChatMessageDto {
     private String user;
     private String content;
-    private ChatMessage.MessageType type;
 
     public ChatMessage toEntity() {
         return ChatMessage.builder()
                 .user(this.user)
                 .content(this.content)
-                .type(this.type)
+                .build();
+    }
+
+    public static ChatMessageDto fromEntity(ChatMessage chatMessage) {
+        return ChatMessageDto.builder()
+                .user(chatMessage.getUser())
+                .content(chatMessage.getContent())
                 .build();
     }
 }

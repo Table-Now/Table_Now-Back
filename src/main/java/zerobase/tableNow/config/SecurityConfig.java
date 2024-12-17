@@ -49,7 +49,11 @@ public class SecurityConfig {
                                 "/store/detail",
                                 "/review/list",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/chat/messages",
+                                "/ws/**",
+                                "/ws-chat",
+                                "/ws-chat/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
