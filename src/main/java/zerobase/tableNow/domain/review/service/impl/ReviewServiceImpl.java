@@ -130,13 +130,13 @@ public class ReviewServiceImpl implements ReviewService {
      * @param user 사용자 ID
      */
     @Override
-    public void delete(String user, Long id) {
+    public void delete(String user, Long reviewId) {
         // 1. 현재 로그인한 사용자 정보 조회
         UsersEntity currentUser = userRepository.findByUser(user)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 2. 특정 리뷰 ID로 리뷰 조회
-        ReviewEntity review = reviewRepository.findById(id)
+        ReviewEntity review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new TableException(ErrorCode.REVIEW_NOT_FOUND));
 
         // 3. 권한 확인

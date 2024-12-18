@@ -12,7 +12,7 @@ public interface MenuService {
 
     List<MenuDto> list(Long storeId);
 
-    void delete(Long id);
+    void delete(Long menuId);
 
     void update(MenuUpdateDto menuUpdateDto);
 

@@ -18,7 +18,7 @@ public interface ReviewService {
     UpdateDto update(Long reviewId,UpdateDto dto);
 
     //리뷰 삭제
-    void delete(String user,Long id);
+    void delete(String user,Long reviewId);
 
     //리뷰 암호 요청
     boolean passwordRequest(PasswordRequestDto passwordRequestDto);

@@ -77,10 +77,11 @@ public class MenuServiceImpl implements MenuService{
 
     //메뉴 목록
     @Override
+    @Transactional(readOnly = true)
 //    @Cacheable(value = "menuCache", key = "#storeId")
-    public List<MenuDto> list(Long store) {
+    public List<MenuDto> list(Long storeId) {
         // 특정 storeId에 해당하는 메뉴 리스트 조회
-        List<MenuEntity> menuEntities = menuRepository.findByStoreId_Id(store);
+        List<MenuEntity> menuEntities = menuRepository.findByStoreId_Id(storeId);
 
         if (menuEntities.isEmpty()) {
             throw new TableException(ErrorCode.PRODUCT_NOT_FOUND,"해당 매장의 메뉴가 없습니다.");
@@ -101,7 +102,7 @@ public class MenuServiceImpl implements MenuService{
     //메뉴삭제
     @Override
 //    @CacheEvict(value = "menuCache", key = "#storeId")
-    public void delete(Long id) {
+    public void delete(Long menuId) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -114,10 +115,10 @@ public class MenuServiceImpl implements MenuService{
         }
 
         // 메뉴 엔티티 조회
-        MenuEntity menu = menuRepository.findById(id)
+        MenuEntity menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        StoreEntity store = storeRepository.findById(id)
+        StoreEntity store = storeRepository.findById(menuId)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 매장 소유자 확인 (매장의 사용자와 현재 로그인한 사용자 비교)
