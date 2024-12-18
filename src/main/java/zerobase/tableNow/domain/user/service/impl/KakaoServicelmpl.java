@@ -16,7 +16,7 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.token.TokenProvider;
 import zerobase.tableNow.domain.user.dto.*;
-import zerobase.tableNow.domain.user.entity.EmailEntity;
+//import zerobase.tableNow.domain.user.entity.EmailEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.domain.user.service.KakaoService;
