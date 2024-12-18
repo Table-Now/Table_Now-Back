@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.store.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class StoreController {
 
     //상점 등록
     @PostMapping("stores")
-    public ResponseEntity<StoreDto> register(
-            @RequestPart(value = "storeDto") StoreDto storeDto,
+    public ResponseEntity<StoreDto> createStore(
+            @Valid @RequestPart(value = "storeDto") StoreDto storeDto,
             @RequestPart(value = "image", required = false) MultipartFile image,
             @RequestPart(value = "menuDtos") List<MenuDto> menuDtos
     ) {
@@ -56,7 +57,7 @@ public class StoreController {
 
     //상점 수정
     @PutMapping("/stores/{id}")
-    public ResponseEntity<StoreDto> update(@PathVariable(name = "id") Long id ,
+    public ResponseEntity<StoreDto> update(@Valid@PathVariable(name = "id") Long id ,
                                            @RequestBody StoreDto storeDto){
         return ResponseEntity.ok().body(storeService.update(id,storeDto));
 
@@ -68,8 +69,8 @@ public class StoreController {
     }
 
     //상점 삭제
-    @DeleteMapping("delete")
-    public ResponseEntity<Void> delete(@RequestParam(name = "id") Long id) {
+    @DeleteMapping("stores/{id}")
+    public ResponseEntity<Void> delete(@PathVariable(name = "id") Long id) {
         storeService.delete(id);
         return ResponseEntity.noContent().build();
     }

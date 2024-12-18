@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.joda.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,17 +34,26 @@ public class StoreEntity extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private UsersEntity user;
+
+    @Pattern(regexp = "\\d{3}-\\d{4}-\\d{4}")
     private String phone;
 
+    @Column(nullable = false)
     private String store;
+    @Column(nullable = false)
     private String storeLocation;
     @Column(name = "storeImg")
+
     private String storeImg;
+
+    @Column(nullable = false)
     private String storeContents;
 
     @Builder.Default
     private Integer rating = 0; // 별점
+    @Column(nullable = false)
     private String storeOpen;
+    @Column(nullable = false)
     private String storeClose;
     private String storeWeekOff;
 

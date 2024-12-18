@@ -43,6 +43,7 @@ public class StoreServiceImpl implements StoreService {
      * @return 상점 등록 내용
      */
     @Override
+    @Transactional
     public StoreDto register(StoreDto storeDto, MultipartFile image) {
         UsersEntity users = userRepository.findByUser(storeDto.getUser())
                 .orElseThrow(()-> new TableException((ErrorCode.USER_NOT_FOUND)));
@@ -87,10 +88,7 @@ public class StoreServiceImpl implements StoreService {
      * @param userLon
      * @return 필터를 통한 상점 목록 반환
      */
-    @CachePut(value = "stores", key = "'list_' + ( #keyword != null ? #keyword : 'null') " +
-            "+ '_' + ( #sortType != null ? #sortType.name() : 'null') + '_' " +
-            "+ ( #userLat != null ? #userLat.toString() : 'null') + '_' " +
-            "+ ( #userLon != null ? #userLon.toString() : 'null')")
+    @Cacheable(value = "stores", key = "'list_' + #keyword + '_' + #sortType + '_' + #userLat + '_' + #userLon")
 
     public List<StoreDto> getAllStores(
             String keyword,
@@ -277,6 +275,7 @@ public class StoreServiceImpl implements StoreService {
      * @param id
      */
     @Override
+    @Transactional
     public void delete(Long id) {
         storeRepository.deleteById(id);
     }
