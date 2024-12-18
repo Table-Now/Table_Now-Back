@@ -8,6 +8,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import zerobase.tableNow.components.S3UploadComponents;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
@@ -22,6 +24,7 @@ import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,10 +37,11 @@ public class MenuServiceImpl implements MenuService{
     private final UserRepository userRepository;
     private final MenuMapper menuMapper;
     private final StoreRepository storeRepository;
+    private final S3UploadComponents s3UploadComponents;
 
     //매장 메뉴 등록
     @Override
-    public MenuDto register(MenuDto menuDto) {
+    public MenuDto register(MenuDto menuDto, MultipartFile image) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -53,6 +57,15 @@ public class MenuServiceImpl implements MenuService{
         StoreEntity store = storeRepository.findById(menuDto.getStoreId())
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            try {
+                imageUrl = s3UploadComponents.upload(image);
+                menuDto.setImage(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("메뉴 이미지 업로드에 실패했습니다.", e);
+            }
+        }
 
         MenuEntity menu = menuMapper.toMenuEntity(menuDto,store);
         MenuEntity saveEntity = menuRepository.save(menu);

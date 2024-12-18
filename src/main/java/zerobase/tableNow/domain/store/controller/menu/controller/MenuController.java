@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.store.controller.menu.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDeleteDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
@@ -19,8 +20,11 @@ public class MenuController {
 
     //메뉴등록
     @PostMapping("register")
-    public ResponseEntity<MenuDto> register(@RequestBody MenuDto menuDto){
-        return ResponseEntity.ok().body(menuService.register(menuDto));
+    public ResponseEntity<MenuDto> register(
+            @RequestBody MenuDto menuDto,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ){
+        return ResponseEntity.ok().body(menuService.register(menuDto, image));
     }
 
     //메뉴목록

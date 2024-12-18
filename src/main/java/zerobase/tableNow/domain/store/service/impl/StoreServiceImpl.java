@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +37,7 @@ public class StoreServiceImpl implements StoreService {
     private final StoreMapper storeMapper;
     private final LocationService locationService;
     private final S3UploadComponents s3UploadComponents;
+
     /**
      * 상점등록
      * @param storeDto
