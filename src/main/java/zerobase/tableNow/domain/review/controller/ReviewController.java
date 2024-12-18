@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.review.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,13 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.update(dto));
     }
 
+//    @PutMapping("{reviewId}")
+//    public ResponseEntity<UpdateDto> update(
+//            @PathVariable Long reviewId,
+//            @RequestBody @Valid UpdateDto dto
+//    ) {
+//        return ResponseEntity.ok().body(reviewService.update(reviewId, dto));
+//    }
     // 리뷰 삭제
     @DeleteMapping("delete")
     public ResponseEntity<?> delete(@RequestParam(name = "user") String user,
