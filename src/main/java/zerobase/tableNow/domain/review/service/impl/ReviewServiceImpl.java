@@ -1,6 +1,7 @@
 package zerobase.tableNow.domain.review.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -101,7 +102,8 @@ public class ReviewServiceImpl implements ReviewService {
      * @return 수정된 리뷰 내용
      */
     @Override
-    public UpdateDto update(UpdateDto dto) {
+    @Transactional
+    public UpdateDto update(Long reviewId,UpdateDto dto) {
         // 사용자 확인
         UsersEntity users = userRepository.findByUser(dto.getUser())
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
@@ -114,15 +116,12 @@ public class ReviewServiceImpl implements ReviewService {
             throw new TableException(ErrorCode.ACCESS_DENIED);
         }
 
-        // 기존 리뷰 엔티티 업데이트
+        // 더티 체킹으로 엔티티 변경
         existingReview.setStore(dto.getStore());
         existingReview.setContents(dto.getContents());
 
-        // 변경된 엔티티 저장
-        ReviewEntity updatedReview = reviewRepository.save(existingReview);
-
-        // 업데이트된 엔티티를 DTO로 변환하여 반환
-        return reviewMapper.toUpdateDto(updatedReview);
+        // 변경된 엔티티를 DTO로 변환하여 반환
+        return reviewMapper.toUpdateDto(existingReview);
     }
 
     /**

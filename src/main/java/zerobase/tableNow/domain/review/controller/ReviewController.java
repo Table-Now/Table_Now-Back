@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.review.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.review.dto.PasswordRequestDto;
 import zerobase.tableNow.domain.review.dto.ReviewDto;
@@ -13,7 +14,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/review/")
+@Validated
+@RequestMapping("/reviews/")
 public class ReviewController {
     private final ReviewService reviewService;
 
@@ -24,25 +26,20 @@ public class ReviewController {
     }
 
     // 리뷰 목록 조회
-    @GetMapping("list")
-    public ResponseEntity<List<ReviewDto>> list(@RequestParam(name = "store") String store){
+    @GetMapping("review/{store}")
+    public ResponseEntity<List<ReviewDto>> list(@PathVariable(name = "store") String store){
         return ResponseEntity.ok().body(reviewService.listByStore(store));
 
     }
 
     // 리뷰 수정
-    @PutMapping("update")
-    public ResponseEntity<UpdateDto> update(@RequestBody UpdateDto dto){
-        return ResponseEntity.ok().body(reviewService.update(dto));
+    @PutMapping("{reviewId}")
+    public ResponseEntity<UpdateDto> update(
+            @Valid @PathVariable(name = "reviewId") Long reviewId,
+            @RequestBody  UpdateDto dto
+    ) {
+        return ResponseEntity.ok().body(reviewService.update(reviewId, dto));
     }
-
-//    @PutMapping("{reviewId}")
-//    public ResponseEntity<UpdateDto> update(
-//            @PathVariable Long reviewId,
-//            @RequestBody @Valid UpdateDto dto
-//    ) {
-//        return ResponseEntity.ok().body(reviewService.update(reviewId, dto));
-//    }
     // 리뷰 삭제
     @DeleteMapping("delete")
     public ResponseEntity<?> delete(@RequestParam(name = "user") String user,
@@ -50,6 +47,7 @@ public class ReviewController {
         reviewService.delete(user,id);
         return ResponseEntity.noContent().build();
     }
+
     //리뷰 비밀글 암호입력 확인 요청
     @PostMapping("passwordrequest")
     public  ResponseEntity<Boolean> passwordRequest(

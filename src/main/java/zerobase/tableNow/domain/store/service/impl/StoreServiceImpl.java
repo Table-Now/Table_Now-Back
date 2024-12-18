@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.store.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,7 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
+    @CacheEvict(value = "stores", allEntries = true)
     public StoreDto register(StoreDto storeDto, MultipartFile image) {
         UsersEntity users = userRepository.findByUser(storeDto.getUser())
                 .orElseThrow(()-> new TableException((ErrorCode.USER_NOT_FOUND)));
@@ -88,8 +90,14 @@ public class StoreServiceImpl implements StoreService {
      * @param userLon
      * @return 필터를 통한 상점 목록 반환
      */
-    @Cacheable(value = "stores", key = "'list_' + #keyword + '_' + #sortType + '_' + #userLat + '_' + #userLon")
-
+    @Cacheable(
+            value = "stores",
+            key = "'list_' " +
+                    "+ (#keyword != null ? #keyword : 'all') + '_' " +
+                    "+ (#sortType != null ? #sortType : 'default') + '_' " +
+                    "+ (#userLat != null ? #userLat : 0) + '_' " +
+                    "+ (#userLon != null ? #userLon : 0)"
+    )
     public List<StoreDto> getAllStores(
             String keyword,
             SortType sortType,
