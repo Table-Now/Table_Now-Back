@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import zerobase.tableNow.domain.cart.repository.CartRepository;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -267,7 +268,17 @@ public class KakaoServicelmpl implements KakaoService {
     @Override
     @Transactional
     public DeleteDto userDelete(String user) {
-        UsersEntity users = findUserByIdOrThrow(user);
+        // 현재 로그인한 사용자 ID 가져오기
+        String loggedInUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 요청한 사용자(user)와 로그인한 사용자(loggedInUserId)가 동일한지 확인
+        if (!user.equals(loggedInUserId)) {
+            throw new TableException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        // 사용자 정보 조회
+        UsersEntity users = userRepository.findByUser(user)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 사용자와 관련된 상점 삭제
         List<StoreEntity> userStores = storeRepository.findByUser(users);
@@ -275,9 +286,6 @@ public class KakaoServicelmpl implements KakaoService {
 
         // 사용자 상태를 'STOP'으로 변경
         users.setUserStatus(Status.STOP); // 더티 체킹을 위해 엔티티의 필드만 수정
-
-        // save 호출은 생략해도 됨 - 엔티티의 상태가 변경되면 트랜잭션 커밋 시 자동으로 DB에 반영됨
-        // 엔티티가 수정된 상태로 영속성 컨텍스트에 있기 때문에, save()를 호출할 필요 없음
 
         return new DeleteDto(users.getUser(), users.getRole());
     }

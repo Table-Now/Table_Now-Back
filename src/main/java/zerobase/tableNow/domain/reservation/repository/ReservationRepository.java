@@ -23,13 +23,11 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     List<ReservationEntity> findByUser(UsersEntity user);
 
-    boolean existsByStoreId(Long id);
+    boolean existsByStore(StoreEntity store);
 
     boolean existsByUserAndStoreNot(UsersEntity users, StoreEntity store);
 
-    long countByStoreAndReservationStatus(StoreEntity store, Status status);
+    ReservationEntity findByUser_User(String userId);
 
     List<ReservationEntity> findByStore_Store(String store);
-
-    ReservationEntity findByUser_User(String userId);
 }
