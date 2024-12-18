@@ -19,20 +19,26 @@ public class UsersEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String user;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String phone;
 
-    @Enumerated(EnumType.STRING) // 또는 EnumType.ORDINAL
+    @Enumerated(EnumType.STRING)
     private Role role; //사용자 타입
+
     private Status userStatus; //이용가능한 상태, 정지상태
+
+    @Column(nullable = false)
+    private Boolean isQueueRestricted;  // 줄서기 금지 상태
+    private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 
     private String kakaoAccessToken;
     private String kakaoRefreshToken;
-
-    private Boolean isQueueRestricted;  // 줄서기 금지 상태
-    private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 
 
 //    private String name;

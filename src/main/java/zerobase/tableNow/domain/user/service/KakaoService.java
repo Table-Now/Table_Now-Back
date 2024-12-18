@@ -27,7 +27,7 @@ public interface KakaoService {
      * @param dto phone
      * @return 회원수정
      */
-    InfoUpdateDto infoUpdate(InfoUpdateDto dto);
+    InfoUpdateDto infoUpdate(String phone,InfoUpdateDto dto);
 
     /**
      * 회원 정지
