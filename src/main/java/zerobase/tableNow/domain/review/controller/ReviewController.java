@@ -3,6 +3,7 @@ package zerobase.tableNow.domain.review.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.review.dto.PasswordRequestDto;
@@ -41,10 +42,13 @@ public class ReviewController {
         return ResponseEntity.ok().body(reviewService.update(reviewId, dto));
     }
     // 리뷰 삭제
-    @DeleteMapping("delete")
-    public ResponseEntity<?> delete(@RequestParam(name = "user") String user,
-                                    @RequestParam(name = "id")Long id){
-        reviewService.delete(user,id);
+    @DeleteMapping("{reviewId}")
+    public ResponseEntity<?> delete(@PathVariable(name = "reviewId")Long reviewId){
+        // 현재 로그인한 사용자 정보 가져오기
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 리뷰 삭제 서비스 호출
+        reviewService.delete(user, reviewId);
         return ResponseEntity.noContent().build();
     }
 
