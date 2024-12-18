@@ -22,7 +22,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     //예약요청
-    @PostMapping
+    @PostMapping("reservation/create")
     public ResponseEntity<ReservationDto> request(@Valid @RequestBody ReservationDto reservationDto){
         log.info("컨트롤러 요청 등록 + {}", reservationDto);
         return ResponseEntity.ok().body(reservationService.request(reservationDto));
