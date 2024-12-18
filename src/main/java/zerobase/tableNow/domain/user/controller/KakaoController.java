@@ -72,7 +72,7 @@ public class KakaoController {
      */
     @PatchMapping("{phone}")
     public ResponseEntity<InfoUpdateDto> updateUserInfo(
-            @PathVariable("phone") String phone,
+            @PathVariable(name = "phone") String phone,
             @RequestBody @Valid InfoUpdateDto dto
     ) {
         InfoUpdateDto updatedUser = kakaoService.infoUpdate(phone, dto);
