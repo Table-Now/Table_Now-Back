@@ -25,8 +25,8 @@ public class MenuController {
 
     //메뉴목록
     @GetMapping("list")
-    public ResponseEntity<List<MenuDto>> list(@RequestParam(name = "storeId") Long storeId){
-        return ResponseEntity.ok(menuService.list(storeId));
+    public ResponseEntity<List<MenuDto>> list(@RequestParam(name = "store") Long store){
+        return ResponseEntity.ok(menuService.list(store));
     }
 
     // 메뉴 삭제

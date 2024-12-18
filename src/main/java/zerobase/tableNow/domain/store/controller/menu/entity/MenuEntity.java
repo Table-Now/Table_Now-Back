@@ -3,8 +3,12 @@ package zerobase.tableNow.domain.store.controller.menu.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
+import zerobase.tableNow.domain.cart.entity.CartEntity;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,4 +32,9 @@ public class MenuEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "menuId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<CartEntity> carts = new ArrayList<>();
+
 }

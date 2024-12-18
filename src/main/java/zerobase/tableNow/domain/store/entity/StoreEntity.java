@@ -10,6 +10,7 @@ import org.joda.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
+import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 
 import java.io.Serializable;
@@ -39,7 +40,6 @@ public class StoreEntity extends BaseEntity implements Serializable {
     private String storeImg;
     private String storeContents;
 
-    @Column(nullable = true)
     @Builder.Default
     private Integer rating = 0; // 별점
     private String storeOpen;
@@ -55,5 +55,9 @@ public class StoreEntity extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "storeId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<MenuEntity> menus = new ArrayList<>();
 
 }

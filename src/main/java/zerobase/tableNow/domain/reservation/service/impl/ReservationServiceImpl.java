@@ -63,7 +63,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         //유저가 줄서기중  다른 매장 줄서기 등록 X
-        boolean isAlreadyQueued = reservationRepository.existsByUserAndStoreNot(users, store);
+        boolean isAlreadyQueued = reservationRepository.existsByUserAndStoreNot(users,store);
         if (isAlreadyQueued){
             throw  new TableException(ErrorCode.CONFLICT);
         }
@@ -164,14 +164,18 @@ public class ReservationServiceImpl implements ReservationService {
         log.info("Input user: {}", user); // 사용자 이름 로깅
         log.info("Input id: {}", id); // 예약 ID 로깅
 
-        boolean exists = reservationRepository.existsByStoreId(id);
+        // StoreEntity를 DB에서 조회
+        StoreEntity store = storeRepository.findById(id).orElse(null);
+        if (store == null) {
+            log.warn("Store with id {} not found", id);
+            return false;
+        }
+
+        boolean exists = reservationRepository.existsByStore(store);
 
         log.info("Query result for user '{}' and id '{}': {}", user, id, exists); // 쿼리 결과 로깅
         return exists;
     }
-
-
-
 }
 
 

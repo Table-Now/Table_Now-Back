@@ -24,7 +24,7 @@ public class StoreController {
     private final MenuService menuService;
 
     //상점 등록
-    @PostMapping("register")
+    @PostMapping("stores")
     public ResponseEntity<StoreDto> register(
             @RequestPart(value = "storeDto") StoreDto storeDto,
             @RequestPart(value = "image", required = false) MultipartFile image,
@@ -39,13 +39,6 @@ public class StoreController {
         return ResponseEntity.ok(savedStore);  // 성공적으로 등록된 상점 정보 반환
     }
 
-//    @PostMapping ("register")
-//    public ResponseEntity<StoreDto> register(
-//            @RequestPart(value = "dto") StoreDto storeDto,
-//            @RequestPart(value = "image", required = false) MultipartFile image
-//    ){
-//        return ResponseEntity.ok().body(storeService.register(storeDto, image));
-//    }
 
     // 상점 목록
     @GetMapping("list")
@@ -62,17 +55,18 @@ public class StoreController {
     }
 
     //상점 수정
-    @PutMapping("update")
-    public ResponseEntity<StoreDto> update(@RequestParam(name = "id") Long id ,
+    @PutMapping("/stores/{id}")
+    public ResponseEntity<StoreDto> update(@PathVariable(name = "id") Long id ,
                                            @RequestBody StoreDto storeDto){
         return ResponseEntity.ok().body(storeService.update(id,storeDto));
 
     }
     //상점 상세정보
-    @GetMapping("detail")
-    public ResponseEntity<StoreDto> detail(@RequestParam(name = "id") Long id){
+    @GetMapping("/stores/{id}")
+    public ResponseEntity<StoreDto> detail(@PathVariable(name = "id") Long id){
         return ResponseEntity.ok().body(storeService.detail(id));
     }
+
     //상점 삭제
     @DeleteMapping("delete")
     public ResponseEntity<Void> delete(@RequestParam(name = "id") Long id) {
