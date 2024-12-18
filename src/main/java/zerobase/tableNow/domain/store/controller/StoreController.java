@@ -1,5 +1,7 @@
 package zerobase.tableNow.domain.store.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import zerobase.tableNow.domain.store.controller.menu.service.MenuService;
 import zerobase.tableNow.domain.store.dto.StoreDto;
 import zerobase.tableNow.domain.store.service.StoreService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,15 +32,32 @@ public class StoreController {
     public ResponseEntity<StoreDto> createStore(
             @Valid @RequestPart(value = "storeDto") StoreDto storeDto,
             @RequestPart(value = "image", required = false) MultipartFile image,
-            @RequestPart(value = "menuDtos") List<MenuDto> menuDtos
+            @RequestPart(value = "menuDtos") String menuDtosJson,
+            @RequestPart(value = "menuImages", required = false) List<MultipartFile> menuImages
     ) {
-        StoreDto savedStore = storeService.register(storeDto, image);
-        for (MenuDto menuDto : menuDtos) {
-            log.info(String.valueOf(savedStore.getId())); //여기가 null임
-            menuDto.setStoreId(savedStore.getId());  // 상점 ID 설정
-            menuService.register(menuDto);  // 메뉴 등록
+        // Parse the JSON string to a list of MenuDto
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<MenuDto> menuDtos;
+        try {
+            menuDtos = objectMapper.readValue(menuDtosJson, new TypeReference<List<MenuDto>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException("메뉴 데이터 파싱 실패", e);
         }
-        return ResponseEntity.ok(savedStore);  // 성공적으로 등록된 상점 정보 반환
+
+        StoreDto savedStore = storeService.register(storeDto, image);
+
+        for (int i = 0; i < menuDtos.size(); i++) {
+            MenuDto menuDto = menuDtos.get(i);
+            menuDto.setStoreId(savedStore.getId());  // 상점 ID 설정
+
+            // Check if there's a corresponding menu image
+            MultipartFile menuImage = (menuImages != null && i < menuImages.size()) ? menuImages.get(i) : null;
+
+            // Pass the menu image to the register method
+            menuService.register(menuDto, menuImage);
+        }
+
+        return ResponseEntity.ok(savedStore);
     }
 
 
