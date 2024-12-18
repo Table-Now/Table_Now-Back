@@ -12,10 +12,11 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<MenuEntity,Long> {
-    List<MenuEntity> findByStoreId_Id(Long storeId);
-
     // 상태 변경 메서드 추가 (매진 -> 진행 중, 진행 중 -> 매진)
     @Modifying
     @Query("UPDATE MenuEntity m SET m.status = :status WHERE m.id = :menuId")
     void updateMenuStatus(@Param("menuId") Long menuId, @Param("status") Status status);
+
+    List<MenuEntity> findByStoreId_Id(Long storeId);
+
 }

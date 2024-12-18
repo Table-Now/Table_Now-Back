@@ -48,14 +48,14 @@ public class CartServiceImpl implements CartService {
         // 메뉴 및 매장 정보 조회
         MenuEntity menuEntity = menuRepository.findById(cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
-        StoreEntity storeEntity = storeRepository.findById(cartDto.getStoreId())
+        StoreEntity storeEntity = storeRepository.findById(cartDto.getStore())
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_PURCHASED));
 
         // TakeoutEntity 생성
         CartEntity cartEntity = CartEntity.builder()
                 .userId(userEntity)
                 .menuId(menuEntity)
-                .storeId(storeEntity)
+                .store(storeEntity)
                 .count(cartDto.getCount())
                 .build();
         // 데이터베이스에 포장 메뉴 저장
@@ -67,7 +67,7 @@ public class CartServiceImpl implements CartService {
                 .id(savedEntity.getId())
                 .userId(savedEntity.getUserId().getId())
                 .menuId(savedEntity.getMenuId().getId())
-                .storeId(savedEntity.getStoreId().getId())
+                .store(savedEntity.getStore().getId())
                 .count(savedEntity.getCount())
                 .build();
 

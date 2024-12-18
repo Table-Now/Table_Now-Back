@@ -11,6 +11,6 @@ public class CartDto {
     private Long id;
     private Long userId;
     private Long menuId;
-    private Long storeId;
+    private Long store;
     private int count = 0;
 }

@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.store.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
@@ -205,6 +206,7 @@ public class StoreServiceImpl implements StoreService {
      * @return 상점 수정내용
      */
     @Override
+    @Transactional
     public StoreDto update(Long id, StoreDto storeDto) {
         StoreEntity storeUpdate = storeRepository.findById(id)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -249,10 +251,10 @@ public class StoreServiceImpl implements StoreService {
 
         storeUpdate.setUpdateAt(LocalDateTime.now());
 
-        StoreEntity updatedStore = storeRepository.save(storeUpdate);
-
-        return storeMapper.convertToDto(updatedStore);
+        // 더티체킹을 통해 변경된 내용을 자동으로 반영
+        return storeMapper.convertToDto(storeUpdate);
     }
+
 
 
 
@@ -262,6 +264,7 @@ public class StoreServiceImpl implements StoreService {
      * @return 상세정보
      */
     @Override
+    @Transactional
     public StoreDto detail(Long id) {
         StoreEntity storeDetail = storeRepository.findById(id)
                 .orElseThrow(()-> new TableException(ErrorCode.PRODUCT_NOT_FOUND));

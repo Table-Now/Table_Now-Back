@@ -25,7 +25,6 @@ public class UsersEntity extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -33,7 +32,6 @@ public class UsersEntity extends BaseEntity {
 
     private Status userStatus; //이용가능한 상태, 정지상태
 
-    @Column(nullable = false)
     private Boolean isQueueRestricted;  // 줄서기 금지 상태
     private LocalDateTime queueRestrictionEndTime;  // 줄서기 금지 종료 시간
 

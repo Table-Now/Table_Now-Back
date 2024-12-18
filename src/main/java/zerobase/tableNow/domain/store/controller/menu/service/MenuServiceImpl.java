@@ -65,9 +65,9 @@ public class MenuServiceImpl implements MenuService{
     //메뉴 목록
     @Override
 //    @Cacheable(value = "menuCache", key = "#storeId")
-    public List<MenuDto> list(Long storeId) {
+    public List<MenuDto> list(Long store) {
         // 특정 storeId에 해당하는 메뉴 리스트 조회
-        List<MenuEntity> menuEntities = menuRepository.findByStoreId_Id(storeId);
+        List<MenuEntity> menuEntities = menuRepository.findByStoreId_Id(store);
 
         if (menuEntities.isEmpty()) {
             throw new TableException(ErrorCode.PRODUCT_NOT_FOUND,"해당 매장의 메뉴가 없습니다.");
