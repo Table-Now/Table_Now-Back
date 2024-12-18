@@ -28,6 +28,7 @@ public class StoreMapper {
     //상점등록 Entity -> Dto
     public StoreDto toStoreDto(StoreEntity storeEntity) {
         return StoreDto.builder()
+                .id(storeEntity.getId())
                 .user(storeEntity.getUser().getUser())
                 .phone(storeEntity.getPhone())
                 .store(storeEntity.getStore())

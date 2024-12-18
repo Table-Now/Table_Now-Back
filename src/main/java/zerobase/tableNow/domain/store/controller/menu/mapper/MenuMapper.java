@@ -11,7 +11,6 @@ public class MenuMapper {
     public MenuEntity toMenuEntity(MenuDto menuDto,
                                    StoreEntity store){
         return MenuEntity.builder()
-                .id(menuDto.getId())
                 .storeId(store)
                 .image(menuDto.getImage())
                 .name(menuDto.getName())
@@ -22,7 +21,6 @@ public class MenuMapper {
 
     public MenuDto toMenuDto(MenuEntity menu){
         return MenuDto.builder()
-                .id(menu.getId())
                 .storeId(menu.getStoreId().getId())
                 .image(menu.getImage())
                 .name(menu.getName())
