@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.store.controller.menu.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -41,14 +42,16 @@ public class MenuController {
     }
 
     //메뉴 수정
-    @PutMapping("update")
-    public ResponseEntity<String > update(@RequestBody MenuUpdateDto menuUpdateDto){
-        menuService.update(menuUpdateDto);
+    @PutMapping("{menuId}")
+    public ResponseEntity<String > update(@Valid  @PathVariable(name = "menuId")Long menuId,
+                                          @RequestBody MenuUpdateDto menuUpdateDto){
+        menuService.update(menuId,menuUpdateDto);
         return ResponseEntity.ok("success");
     }
+
     // 메뉴 수정 -> 상태수정 (매진여부)
-    @PutMapping("restatus")
-    public ResponseEntity<String> reStatus(@RequestParam(name = "menuId") Long menuId){
+    @PutMapping("{menuId}/restatus")
+    public ResponseEntity<String> reStatus(@Valid @PathVariable(name = "menuId") Long menuId){
         menuService.reStatus(menuId);
         return ResponseEntity.ok("success");
     }

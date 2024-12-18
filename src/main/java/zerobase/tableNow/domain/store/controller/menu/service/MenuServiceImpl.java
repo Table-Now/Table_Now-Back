@@ -131,8 +131,9 @@ public class MenuServiceImpl implements MenuService{
     }
     //메뉴수정
     @Override
+    @Transactional
 //    @CachePut(value = "menuCache", key = "#storeId")
-    public void update(MenuUpdateDto menuUpdateDto) {
+    public void update(Long menuId, MenuUpdateDto menuUpdateDto) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -141,14 +142,16 @@ public class MenuServiceImpl implements MenuService{
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 메뉴 엔티티 조회
-        MenuEntity menu = menuRepository.findById(menuUpdateDto.getId())
-                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+        MenuEntity menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
+
+        // 메뉴가 속한 매장 정보 조회
+        StoreEntity store = menu.getStoreId();
 
         // 매장 소유자 확인
-         StoreEntity store = menu.getStoreId();
-         if (!store.getUser().equals(users)) {
-             throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
-         }
+        if (!store.getUser().equals(users)) {
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
+        }
 
         // 수정된 값이 있다면, 해당 값을 엔티티에 반영
         if (menuUpdateDto.getName() != null) {
@@ -167,6 +170,7 @@ public class MenuServiceImpl implements MenuService{
 
     // 메뉴 수정 -> 상태수정 (매진여부)
     @Override
+    @Transactional
 //    @CachePut(value = "menuCache", key = "#storeId")
     public void reStatus(Long menuId) {
         // 현재 로그인한 사용자 ID 가져오기
