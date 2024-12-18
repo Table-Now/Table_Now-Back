@@ -1,10 +1,13 @@
 package zerobase.tableNow.domain.store.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.domain.constant.SortType;
+import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
+import zerobase.tableNow.domain.store.controller.menu.service.MenuService;
 import zerobase.tableNow.domain.store.dto.StoreDto;
 import zerobase.tableNow.domain.store.service.StoreService;
 
@@ -13,17 +16,34 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/store/")
+@Slf4j
 public class StoreController {
     private final StoreService storeService;
+    private final MenuService menuService;
 
     //상점 등록
-    @PostMapping ("register")
+    @PostMapping("register")
     public ResponseEntity<StoreDto> register(
-            @RequestPart(value = "dto") StoreDto storeDto,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ){
-        return ResponseEntity.ok().body(storeService.register(storeDto, image));
+            @RequestPart(value = "storeDto") StoreDto storeDto,
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @RequestPart(value = "menuDtos") List<MenuDto> menuDtos
+    ) {
+        StoreDto savedStore = storeService.register(storeDto, image);
+        for (MenuDto menuDto : menuDtos) {
+            log.info(String.valueOf(savedStore.getId())); //여기가 null임
+            menuDto.setStoreId(savedStore.getId());  // 상점 ID 설정
+            menuService.register(menuDto);  // 메뉴 등록
+        }
+        return ResponseEntity.ok(savedStore);  // 성공적으로 등록된 상점 정보 반환
     }
+
+//    @PostMapping ("register")
+//    public ResponseEntity<StoreDto> register(
+//            @RequestPart(value = "dto") StoreDto storeDto,
+//            @RequestPart(value = "image", required = false) MultipartFile image
+//    ){
+//        return ResponseEntity.ok().body(storeService.register(storeDto, image));
+//    }
 
     // 상점 목록
     @GetMapping("list")
