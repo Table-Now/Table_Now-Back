@@ -67,7 +67,7 @@ public class KakaoServicelmpl implements KakaoService {
 
         Role userRole = usersEntity.getRole();
 
-        LoginDto loginDto = new LoginDto(user, userRole, usersEntity.getPhone());
+        LoginDto loginDto = new LoginDto(user, usersEntity.getPhone(),userRole );
 
         String jwtToken = tokenProvider.generateAccessToken(loginDto);
 
@@ -230,7 +230,7 @@ public class KakaoServicelmpl implements KakaoService {
      */
     private UsersEntity findUserByIdOrThrow(String user) {
         return userRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("해당 ID가 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
     }
 
     /**
@@ -239,7 +239,8 @@ public class KakaoServicelmpl implements KakaoService {
      * @return 회원수정
      */
     @Override
-    public InfoUpdateDto infoUpdate(InfoUpdateDto dto) {
+    @Transactional
+    public InfoUpdateDto infoUpdate(String phone,InfoUpdateDto dto) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -247,9 +248,10 @@ public class KakaoServicelmpl implements KakaoService {
         UsersEntity userEntity = userRepository.findByUser(userId)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
-        // 전화번호 업데이트
+        // 전화번호 업데이트 (Dirty Checking이 변경 사항을 감지)
         userEntity.setPhone(dto.getPhone());
-        userRepository.save(userEntity);
+
+        // 영속성 컨텍스트에서 Dirty Checking에 의해 자동으로 업데이트됨
 
         // 수정된 사용자 정보를 반환
         return InfoUpdateDto.builder()
@@ -263,20 +265,26 @@ public class KakaoServicelmpl implements KakaoService {
      * @return void
      */
     @Override
+    @Transactional
     public DeleteDto userDelete(String user) {
         UsersEntity users = findUserByIdOrThrow(user);
 
+        // 사용자와 관련된 상점 삭제
         List<StoreEntity> userStores = storeRepository.findByUser(users);
         storeRepository.deleteAll(userStores);
 
-        users.setUserStatus(Status.STOP);
-        UsersEntity savedUser = userRepository.save(users);
+        // 사용자 상태를 'STOP'으로 변경
+        users.setUserStatus(Status.STOP); // 더티 체킹을 위해 엔티티의 필드만 수정
 
-        return new DeleteDto(savedUser.getUser(), savedUser.getRole());
+        // save 호출은 생략해도 됨 - 엔티티의 상태가 변경되면 트랜잭션 커밋 시 자동으로 DB에 반영됨
+        // 엔티티가 수정된 상태로 영속성 컨텍스트에 있기 때문에, save()를 호출할 필요 없음
+
+        return new DeleteDto(users.getUser(), users.getRole());
     }
 
     // 내 정보 조회
     @Override
+    @Transactional
     public MyInfoDto myInfo(String user) {
         UsersEntity userEntity = findUserByIdOrThrow(user);
 

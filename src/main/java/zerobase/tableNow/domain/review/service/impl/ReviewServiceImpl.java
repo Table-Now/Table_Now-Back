@@ -104,14 +104,14 @@ public class ReviewServiceImpl implements ReviewService {
     public UpdateDto update(UpdateDto dto) {
         // 사용자 확인
         UsersEntity users = userRepository.findByUser(dto.getUser())
-                .orElseThrow(() -> new RuntimeException("아이디가 존재하지 않습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         ReviewEntity existingReview = reviewRepository.findByUser(users)
-                .orElseThrow(() -> new RuntimeException("해당 리뷰가 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.REVIEW_NOT_FOUND));
 
         // 리뷰 작성자와 현재 사용자가 일치하는지 확인
         if (!existingReview.getUser().getUser().equals(dto.getUser())) {
-            throw new RuntimeException("리뷰 작성자만 수정할 수 있습니다.");
+            throw new TableException(ErrorCode.ACCESS_DENIED);
         }
 
         // 기존 리뷰 엔티티 업데이트
@@ -134,11 +134,11 @@ public class ReviewServiceImpl implements ReviewService {
     public void delete(String user, Long id) {
         // 1. 현재 로그인한 사용자 정보 조회
         UsersEntity currentUser = userRepository.findByUser(user)
-                .orElseThrow(() -> new EntityNotFoundException("아이디 " + user + "를 가진 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 2. 특정 리뷰 ID로 리뷰 조회
         ReviewEntity review = reviewRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("해당하는 리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> new TableException(ErrorCode.REVIEW_NOT_FOUND));
 
         // 3. 권한 확인
         boolean isReviewAuthor = review.getUser().getUser().equals(user);
@@ -147,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 4. 리뷰 작성자 확인 및 권한 검증
         if (!isReviewAuthor && !isManager && !isAdmin) {
-            throw new AccessDeniedException("이 리뷰를 삭제할 권한이 없습니다.");
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
         }
 
         // 5. 리뷰 삭제

@@ -1,9 +1,11 @@
 package zerobase.tableNow.domain.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import zerobase.tableNow.domain.user.dto.DeleteDto;
 import zerobase.tableNow.domain.user.dto.InfoUpdateDto;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/kakao/")
+@Validated
 public class KakaoController {
 
     private final KakaoService kakaoService;
@@ -67,9 +70,12 @@ public class KakaoController {
      * @param dto phone
      * @return 수정완료
      */
-    @PatchMapping("infoupdate")
-    public ResponseEntity<InfoUpdateDto> infoUpdate(@RequestBody InfoUpdateDto dto) {
-        InfoUpdateDto updatedUser = kakaoService.infoUpdate(dto);
+    @PatchMapping("{phone}")
+    public ResponseEntity<InfoUpdateDto> updateUserInfo(
+            @PathVariable("phone") String phone,
+            @RequestBody @Valid InfoUpdateDto dto
+    ) {
+        InfoUpdateDto updatedUser = kakaoService.infoUpdate(phone, dto);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -78,8 +84,8 @@ public class KakaoController {
      * @param user user
      * @return user
      */
-    @DeleteMapping("delete")
-    public ResponseEntity<DeleteDto> userDelete(@RequestParam(name = "user") String user){
+    @DeleteMapping("{user}")
+    public ResponseEntity<DeleteDto> userDelete(@PathVariable(name = "user") String user){
         return ResponseEntity.ok().body(kakaoService.userDelete(user));
     }
 
@@ -88,8 +94,8 @@ public class KakaoController {
      * @param user user
      * @return user
      */
-    @GetMapping("/myinfo")
-    public ResponseEntity<MyInfoDto> myInfo(@RequestParam(name= "user") String user){
+    @GetMapping("info/{user}")
+    public ResponseEntity<MyInfoDto> myInfo( @PathVariable("user")String user){
         return ResponseEntity.ok().body(kakaoService.myInfo(user));
     }
 

@@ -2,6 +2,7 @@ package zerobase.tableNow.domain.user.dto;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class RegisterDto {
+    @NotBlank(message = "사용자 ID는 필수입니다.")
     private String user;
+    @NotBlank(message = "이메일은 필수입니다.")
     private String email;
 
     @Enumerated(EnumType.STRING)
