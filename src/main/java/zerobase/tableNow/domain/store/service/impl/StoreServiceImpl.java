@@ -19,7 +19,6 @@ import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
-import zerobase.tableNow.redis.RedisConfig;
 
 import java.io.IOException;
 import java.time.*;

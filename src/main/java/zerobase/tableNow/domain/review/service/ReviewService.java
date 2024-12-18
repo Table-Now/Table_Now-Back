@@ -15,7 +15,7 @@ public interface ReviewService {
     List<ReviewDto> listByStore(String store);
 
     //리뷰 수정
-    UpdateDto update(UpdateDto dto);
+    UpdateDto update(Long reviewId,UpdateDto dto);
 
     //리뷰 삭제
     void delete(String user,Long id);
