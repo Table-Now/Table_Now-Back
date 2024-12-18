@@ -52,7 +52,7 @@ public class RedisConfig {
 
         // RedisCacheConfiguration 설정
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(5))  // 5분 TTL 설정
+                .entryTtl(Duration.ofMinutes(10))  // 5분 TTL 설정
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
