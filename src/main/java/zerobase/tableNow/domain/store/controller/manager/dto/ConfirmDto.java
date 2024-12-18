@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.store.controller.manager.dto;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter

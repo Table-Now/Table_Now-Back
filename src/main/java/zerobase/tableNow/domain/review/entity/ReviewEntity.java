@@ -26,6 +26,7 @@ public class ReviewEntity extends BaseEntity {
     @JoinColumn(name = "user")
     private UsersEntity user;
 
+    @Column(nullable = false)
     private String contents; // 리뷰내용
 
     @Enumerated(EnumType.STRING)

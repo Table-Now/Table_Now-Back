@@ -31,7 +31,9 @@ public enum ErrorCode {
     DUPLICATE_REVIEW(HttpStatus.FORBIDDEN, "이미 해당 매장에 대해 리뷰를 남겼습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰가 없습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "리뷰를 수정할 권한이 없습니다."),
-    EMAIL_SEND_FAILED(HttpStatus.FORBIDDEN,"내정보 수정 -> 인증 메일 발송 실패");
+    EMAIL_SEND_FAILED(HttpStatus.FORBIDDEN,"내정보 수정 -> 인증 메일 발송 실패"),
+
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다.");
 
 
 

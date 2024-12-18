@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.reservation.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import zerobase.tableNow.domain.constant.Status;
 
@@ -10,7 +11,9 @@ import zerobase.tableNow.domain.constant.Status;
 @Builder
 public class ApprovalDto {
     private Long id;
+    @NotBlank(message = "전화번호 필수 입력.")
     private String phone;
+
     private Status reservationStatus;
     private String message; // 대기번호에 대한 메시지
 

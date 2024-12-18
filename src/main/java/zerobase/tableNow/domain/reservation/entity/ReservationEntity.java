@@ -25,12 +25,15 @@ public class ReservationEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     private UsersEntity user;
+
+    @Column(nullable = false)
     private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private StoreEntity store; //상점이름
 
+    @Column(nullable = false)
     private Integer peopleNb; // 예약인원
 
     @Enumerated(EnumType.STRING)
