@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PatchMapping;
 import zerobase.tableNow.domain.cart.mapper.CartMapper;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
 import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
@@ -21,6 +22,7 @@ import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,8 +91,44 @@ public class CartServiceImpl implements CartService {
     //장바구니 목록
     @Override
     public List<CartDto> cartList(Long userId) {
+        List<CartEntity> cartEntities = cartRepository.findAll();
+        return cartEntities.stream()
+                .map(cartMapper::toCartDto)
+                .collect(Collectors.toList());
+    }
 
-        return null;
+    //장바구니 삭제
+    @Override
+    @Transactional
+    public void cartDelete(Long cartId) {
+        // 현재 로그인한 사용자 ID 가져오기
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UsersEntity userEntity = userRepository.findByUser(userId)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        // 장바구니 ID가 존재하는지 확인
+        CartEntity cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
+
+        // 로그인한 사용자와 장바구니의 소유자가 일치하는지 확인
+        if (!cart.getUserId().equals(userEntity)) {
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+        cartRepository.delete(cart);
+    }
+    //회원수정
+    @Override
+    @Transactional
+    public void updateCart(Long userId,CartDto cartDto) {
+        CartEntity cart = cartRepository.findByUserIdIdAndMenuIdId(userId, cartDto.getMenuId())
+                .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
+
+        MenuEntity menu = menuRepository.findById(cartDto.getMenuId())
+                .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
+
+        cart.setTotalCount(cartDto.getTotalCount());
+        cart.setTotalAmount(menu.getPrice() * cartDto.getTotalCount());
     }
 
 }

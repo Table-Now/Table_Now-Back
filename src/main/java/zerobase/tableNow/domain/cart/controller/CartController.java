@@ -34,4 +34,19 @@ public class CartController {
         return ResponseEntity.ok().body(cartService.cartList(userId));
     }
 
+    //장바구니 삭제
+    @DeleteMapping("use/{cartId}")
+    public ResponseEntity<String> cartDelete(@PathVariable(name = "cartId") Long cartId){
+        cartService.cartDelete(cartId);
+        return ResponseEntity.ok("success");
+    }
+
+    //장바구니 수정
+    @PatchMapping("cart/{userId}")
+    public ResponseEntity<?> updateCart(@Valid @PathVariable(name = "userId") Long userId,
+                                             @RequestBody CartDto cartDto){
+        cartService.updateCart(userId,cartDto);
+        return ResponseEntity.ok("장바구니가 성공적으로 수정되었습니다.");
+    }
+
 }

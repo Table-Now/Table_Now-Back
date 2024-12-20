@@ -9,4 +9,7 @@ public interface CartService {
 
     List<CartDto> cartList(Long userId);
 
+    void cartDelete(Long cartId);
+
+    void updateCart(Long userId,CartDto cartDto);
 }

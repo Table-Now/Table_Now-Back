@@ -20,6 +20,7 @@ public enum ErrorCode {
     DELETE_USER(HttpStatus.BAD_REQUEST, "탈퇴한 계정입니다."),
 
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상점을 찾을 수 없습니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니항목을 찾을 수 없습니다."),
     MENUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
     PRODUCT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "동일한 상점이 이미 존재합니다."),
 
