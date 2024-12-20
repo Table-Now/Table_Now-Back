@@ -15,15 +15,20 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 @AllArgsConstructor
 public class MenuDto {
     private Long id;
+
     @NotBlank(message = "상점 이름 필수 입력.")
     private Long storeId;
+
     private String image;
-    @NotNull(message = "메뉴 이름은 필수 항목입니다.")
+
+    @NotBlank(message = "메뉴 이름은 필수 항목입니다.")
     private String name;
 
-    @NotBlank(message = "금액 필수 입력.")
-    @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
-    private String price;
+    @NotNull(message = "금액 필수 입력.")
+    @Min(value = 100, message = "100원 이상이어야 합니다.")
+    private int price;
+
+    private int count;
 
     @Enumerated(EnumType.STRING)
     private Status status;

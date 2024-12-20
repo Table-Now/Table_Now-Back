@@ -1,6 +1,7 @@
 package zerobase.tableNow.domain.reservation.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import zerobase.tableNow.domain.constant.Status;
 
@@ -20,7 +21,8 @@ public class ReservationDto {
     private String phone;
     @NotBlank(message = "상점 이름 필수 입력.")
     private String store; //상점이름
-    @NotBlank(message = "예약인원 필수 입력.")
+
+    @NotNull(message = "예약인원 필수 입력.")
     private Integer peopleNb; // 예약인원
 
     private Status reservationStatus; // 줄서기여부
