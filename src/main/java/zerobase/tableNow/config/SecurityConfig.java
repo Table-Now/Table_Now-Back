@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 "/kakao/login",
                                 "/kakao/logout",
                                 "/store/list",
-                                "/store/detail",
+                                "/store/stores/**",
                                 "/review/list",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

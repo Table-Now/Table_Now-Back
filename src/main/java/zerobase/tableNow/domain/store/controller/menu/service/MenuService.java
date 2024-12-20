@@ -14,7 +14,7 @@ public interface MenuService {
 
     void delete(Long menuId);
 
-    void update(Long menuId, MenuUpdateDto menuUpdateDto);
+    void update(Long menuId, MenuUpdateDto menuUpdateDto, MultipartFile image);
 
     void reStatus(Long menuId);
 }

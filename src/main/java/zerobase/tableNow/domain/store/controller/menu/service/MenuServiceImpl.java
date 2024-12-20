@@ -133,7 +133,7 @@ public class MenuServiceImpl implements MenuService{
     @Override
     @Transactional
 //    @CachePut(value = "menuCache", key = "#storeId")
-    public void update(Long menuId, MenuUpdateDto menuUpdateDto) {
+    public void update(Long menuId, MenuUpdateDto menuUpdateDto, MultipartFile image) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -151,6 +151,17 @@ public class MenuServiceImpl implements MenuService{
         // 매장 소유자 확인
         if (!store.getUser().equals(users)) {
             throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
+        }
+
+        // 이미지 파일이 제공된 경우 S3에 업로드
+        if (image != null && !image.isEmpty()) {
+            try {
+                // 기존 이미지 URL이 있다면 S3에서 삭제 로직 추가 가능
+                String imageUrl = s3UploadComponents.upload(image);
+                menu.setImage(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.", e);
+            }
         }
 
         // 수정된 값이 있다면, 해당 값을 엔티티에 반영

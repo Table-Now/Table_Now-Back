@@ -213,12 +213,23 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
-    public StoreDto update(Long id, StoreDto storeDto) {
+    public StoreDto update(Long id, StoreDto storeDto, MultipartFile file) {
         StoreEntity storeUpdate = storeRepository.findById(id)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         UsersEntity currentUser = storeUpdate.getUser();
         storeUpdate.setUser(currentUser); // 기존 사용자 정보 유지
+
+        // 이미지 파일이 제공된 경우 S3에 업로드
+        if (file != null && !file.isEmpty()) {
+            try {
+                // 기존 이미지 URL이 있다면 S3에서 삭제 로직 추가 가능
+                String imageUrl = s3UploadComponents.upload(file);
+                storeUpdate.setStoreImg(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 중 오류가 발생했습니다.", e);
+            }
+        }
 
         // 각 필드에 대해 빈값 또는 공백만 있는 경우 기존 값을 유지
         if (storeDto.getStore() != null && !storeDto.getStore().trim().isEmpty()) {
@@ -236,21 +247,22 @@ public class StoreServiceImpl implements StoreService {
             }
         }
 
-        if (storeDto.getStoreImg() != null && !storeDto.getStoreImg().trim().isEmpty()) {
-            storeUpdate.setStoreImg(storeDto.getStoreImg());
-        }
         if (storeDto.getStoreContents() != null && !storeDto.getStoreContents().trim().isEmpty()) {
             storeUpdate.setStoreContents(storeDto.getStoreContents());
         }
+
         if (storeDto.getRating() != null) {
             storeUpdate.setRating(storeDto.getRating());
         }
+
         if (storeDto.getStoreOpen() != null && !storeDto.getStoreOpen().trim().isEmpty()) {
             storeUpdate.setStoreOpen(storeDto.getStoreOpen());
         }
+
         if (storeDto.getStoreClose() != null && !storeDto.getStoreClose().trim().isEmpty()) {
             storeUpdate.setStoreClose(storeDto.getStoreClose());
         }
+
         if (storeDto.getStoreWeekOff() != null && !storeDto.getStoreWeekOff().trim().isEmpty()) {
             storeUpdate.setStoreWeekOff(storeDto.getStoreWeekOff());
         }
