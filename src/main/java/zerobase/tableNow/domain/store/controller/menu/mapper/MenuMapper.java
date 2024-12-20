@@ -10,12 +10,16 @@ import zerobase.tableNow.domain.store.entity.StoreEntity;
 public class MenuMapper {
     public MenuEntity toMenuEntity(MenuDto menuDto,
                                    StoreEntity store){
+        // 메뉴의 가격과 수량을 곱하여 총합을 계산
+        int totalCount = menuDto.getPrice() * menuDto.getCount();
+
         return MenuEntity.builder()
                 .storeId(store)
                 .image(menuDto.getImage())
                 .name(menuDto.getName())
                 .price(menuDto.getPrice())
                 .status(Status.ING)
+                .count(totalCount)
                 .build();
     }
 
@@ -26,6 +30,7 @@ public class MenuMapper {
                 .name(menu.getName())
                 .price(menu.getPrice())
                 .status(menu.getStatus())
+                .count(menu.getCount())
                 .build();
     }
 }

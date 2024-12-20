@@ -11,16 +11,13 @@ import lombok.*;
 @AllArgsConstructor
 public class CartDto {
     private Long id;
-    @NotBlank(message = "사용자 ID는 필수입니다.")
     private Long userId;
 
-    @NotBlank(message = "메뉴추가 필수입니다.")
     @Min(value = 1, message = "메뉴추가는 최소 1개부터 시작")
     private Long menuId;
 
-    @NotBlank(message = "매장선택 필수입니다.")
     private Long store;
 
-    @Min(value = 1, message = "count는 최소 1 부터 시작")
-    private int count = 0;
+    private int totalCount;//개수
+    private int totalAmount; // 총액
 }

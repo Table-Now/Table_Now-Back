@@ -31,12 +31,15 @@ public class MenuEntity extends BaseEntity {
     private String image;
     @NotBlank(message = "메뉴 이름 필수 입력.")
     private String name;
+
     @NotBlank(message = "금액 필수 입력.")
-    @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
-    private String price;
+    @Min(value = 0, message = "100원 이상이어야 합니다.")
+    private int price;
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    private int count; //개수
 
     @OneToMany(mappedBy = "menuId", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default

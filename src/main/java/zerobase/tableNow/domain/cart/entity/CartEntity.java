@@ -28,5 +28,8 @@ public class CartEntity extends BaseEntity{
         @ManyToOne(fetch = FetchType.LAZY)
         private StoreEntity store;
 
-        private int count; //개수
+        private int totalCount; //개수
+
+        private int totalAmount; // 총액
+
 }

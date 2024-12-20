@@ -12,10 +12,12 @@ public class MenuDeleteDto {
     private Long id;
     private String image;
 
-    @NotNull(message = "메뉴 이름은 필수 항목입니다.")
+    @NotBlank(message = "메뉴 이름은 필수 항목입니다.")
     private String name;
 
-    @NotBlank(message = "금액 필수 입력.")
-    @Min(value = 0, message = "가격은 0 이상이어야 합니다.")
-    private String price;
+    private int count;
+
+    @NotNull(message = "금액 필수 입력.")
+    @Min(value = 100, message = "100원 이상이어야 합니다.")
+    private int price;
 }

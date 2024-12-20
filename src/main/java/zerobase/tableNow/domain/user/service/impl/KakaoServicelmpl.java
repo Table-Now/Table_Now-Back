@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import zerobase.tableNow.domain.cart.repository.CartRepository;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
@@ -26,7 +25,6 @@ import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor

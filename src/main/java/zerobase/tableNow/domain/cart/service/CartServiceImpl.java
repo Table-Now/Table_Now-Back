@@ -1,8 +1,11 @@
 package zerobase.tableNow.domain.cart.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import zerobase.tableNow.domain.cart.mapper.CartMapper;
 import zerobase.tableNow.domain.reservation.entity.ReservationEntity;
 import zerobase.tableNow.domain.reservation.repository.ReservationRepository;
 import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
@@ -17,6 +20,8 @@ import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -25,10 +30,12 @@ public class CartServiceImpl implements CartService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
     private final ReservationRepository reservationRepository;
+    private final CartMapper cartMapper;
 
     //장바구니 등록
     @Override
-    public CartDto register(CartDto cartDto) {
+    @Transactional
+    public CartDto addCart(Long storeId, CartDto cartDto) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -42,34 +49,48 @@ public class CartServiceImpl implements CartService {
 
         // 대기번호가 부여된 상태인지 확인
         if (reservationEntity.getWaitingNumber() == null) {
-            throw new TableException(ErrorCode.FORBIDDEN_ACCESS,"대기번호가 부여되지 않은 상태에서는 주문이 불가능합니다.");
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "대기번호가 부여되지 않은 상태에서는 주문이 불가능합니다.");
         }
 
-        // 메뉴 및 매장 정보 조회
+        // 매장 정보 조회
+        StoreEntity storeEntity = storeRepository.findById(storeId)
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        // 매장과 메뉴가 일치하는지 검증
         MenuEntity menuEntity = menuRepository.findById(cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
-        StoreEntity storeEntity = storeRepository.findById(cartDto.getStore())
-                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_PURCHASED));
 
-        // TakeoutEntity 생성
+        if (!menuEntity.getStoreId().getId().equals(storeId)) {
+            throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "해당 매장의 메뉴가 아닙니다.");
+        }
+
+        // 금액 총합산 로직
+        int totalAmount = menuEntity.getPrice() * cartDto.getTotalCount();
+
+        // 장바구니 엔티티 생성
         CartEntity cartEntity = CartEntity.builder()
                 .userId(userEntity)
                 .menuId(menuEntity)
                 .store(storeEntity)
-                .count(cartDto.getCount())
+                .totalCount(cartDto.getTotalCount())
+                .totalAmount(totalAmount)
                 .build();
-        // 데이터베이스에 포장 메뉴 저장
+
+        // 데이터베이스에 저장
         CartEntity savedEntity = cartRepository.save(cartEntity);
 
+        // DTO 반환
+        CartDto cartDtoResponse = cartMapper.toCartDto(savedEntity);
+        cartDtoResponse.setTotalAmount(totalAmount);  // 총합을 DTO에 추가
 
-        // 저장된 엔티티를 DTO로 변환하여 반환
-        return CartDto.builder()
-                .id(savedEntity.getId())
-                .userId(savedEntity.getUserId().getId())
-                .menuId(savedEntity.getMenuId().getId())
-                .store(savedEntity.getStore().getId())
-                .count(savedEntity.getCount())
-                .build();
-
+        return cartDtoResponse;
     }
+
+    //장바구니 목록
+    @Override
+    public List<CartDto> cartList(Long userId) {
+
+        return null;
+    }
+
 }

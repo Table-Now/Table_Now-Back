@@ -160,7 +160,7 @@ public class MenuServiceImpl implements MenuService{
         if (menuUpdateDto.getImage() != null) {
             menu.setImage(menuUpdateDto.getImage());
         }
-        if (menuUpdateDto.getPrice() != null) {
+        if (menuUpdateDto.getPrice() != 0) {
             menu.setPrice(menuUpdateDto.getPrice());
         }
 
