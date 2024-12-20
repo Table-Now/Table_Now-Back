@@ -75,13 +75,15 @@ public class StoreController {
         );
     }
 
-    //상점 수정
     @PutMapping("/stores/{id}")
-    public ResponseEntity<StoreDto> update(@Valid @PathVariable(name = "id") Long id ,
-                                           @RequestBody StoreDto storeDto){
-        return ResponseEntity.ok().body(storeService.update(id,storeDto));
-
+    public ResponseEntity<StoreDto> update(
+            @Valid @PathVariable(name = "id") Long id,
+            @RequestPart(value = "storeDto") StoreDto storeDto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        return ResponseEntity.ok().body(storeService.update(id, storeDto, file));
     }
+
     //상점 상세정보
     @GetMapping("/stores/{id}")
     public ResponseEntity<StoreDto> detail(@PathVariable(name = "id") Long id){

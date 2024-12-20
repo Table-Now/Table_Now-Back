@@ -48,7 +48,6 @@ public class ReservationServiceImpl implements ReservationService {
      */
     @Override
     public ReservationDto request(ReservationDto reservationDto) {
-        log.info("서비스 요청 등록 + {}", reservationDto);
         // 사용자와 매장 정보 조회
         UsersEntity users = userRepository
                 .findByUser(reservationDto.getUserId())
@@ -72,11 +71,11 @@ public class ReservationServiceImpl implements ReservationService {
         ReservationEntity reservationEntity = reservationMapper.toReserEntity(reservationDto, users, store);
         ReservationEntity saveEntity = reservationRepository.save(reservationEntity);
 
-        String email = users.getEmail();
+  /*      String email = users.getEmail();
         String subject = "TableNow 예약 정보";
         String text = mailComponents.getEmailReservation(reservationDto.getStore());
 
-        mailComponents.sendMail(email, subject, text);
+        mailComponents.sendMail(email, subject, text);*/
 
         return reservationMapper.toReserDto(saveEntity);
     }

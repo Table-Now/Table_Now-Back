@@ -16,7 +16,7 @@ public interface  StoreService {
     List<StoreDto> getAllStores(String keyword, SortType sortTypeEnum, Double userLat, Double userLon);
 
     //상점 수정
-    StoreDto update(Long id,StoreDto storeDto);
+    StoreDto update(Long id,StoreDto storeDto, MultipartFile file);
 
     //상점 상세정보
     StoreDto detail(Long id);

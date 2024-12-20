@@ -22,11 +22,12 @@ public class MenuController {
     //메뉴등록
     @PostMapping("register")
     public ResponseEntity<MenuDto> menuCreate(
-            @RequestBody MenuDto menuDto,
+            @RequestPart(value = "menuCreateDto") MenuDto menuDto,
             @RequestPart(value = "image", required = false) MultipartFile image
-    ){
+    ) {
         return ResponseEntity.ok().body(menuService.register(menuDto, image));
     }
+
 
     //메뉴목록
     @GetMapping("menu/{storeId}")
@@ -43,9 +44,12 @@ public class MenuController {
 
     //메뉴 수정
     @PutMapping("{menuId}")
-    public ResponseEntity<String > update(@Valid  @PathVariable(name = "menuId")Long menuId,
-                                          @RequestBody MenuUpdateDto menuUpdateDto){
-        menuService.update(menuId,menuUpdateDto);
+    public ResponseEntity<String> update(
+            @PathVariable(name = "menuId") Long menuId,
+            @RequestPart(value = "menuUpdateDto") MenuUpdateDto menuUpdateDto,  // @RequestBody에서 @RequestPart로 변경
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ){
+        menuService.update(menuId, menuUpdateDto, image);
         return ResponseEntity.ok("success");
     }
 
