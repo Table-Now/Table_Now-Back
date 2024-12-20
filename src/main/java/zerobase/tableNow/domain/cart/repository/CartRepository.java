@@ -6,9 +6,12 @@ import zerobase.tableNow.domain.cart.entity.CartEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<CartEntity,Long> {
 
     List<CartEntity> findByUserId(UsersEntity userEntity);
+
+    Optional<CartEntity> findByUserIdIdAndMenuIdId(Long userId, Long menuId);
 }
