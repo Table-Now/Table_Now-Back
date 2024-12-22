@@ -26,13 +26,9 @@ public class CartEntity extends BaseEntity{
         @JoinColumn(name = "user_id")
         private UsersEntity userId;
 
-        @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(
-                name = "cart_menu",
-                joinColumns = @JoinColumn(name = "cart_id"),
-                inverseJoinColumns = @JoinColumn(name = "menu_id")
-        )
-        private List<MenuEntity> menus = new ArrayList<>();
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "menu_id")
+        private MenuEntity menuId;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "store_id")

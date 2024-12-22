@@ -73,7 +73,7 @@ public class CartServiceImpl implements CartService {
         // 장바구니 엔티티 생성
         CartEntity cartEntity = CartEntity.builder()
                 .userId(userEntity)
-                .menus(Collections.singletonList(menuEntity))
+                .menuId(menuEntity)
                 .storeId(storeEntity)
                 .totalCount(cartDto.getTotalCount())
                 .totalAmount(totalAmount)
@@ -119,11 +119,12 @@ public class CartServiceImpl implements CartService {
         }
         cartRepository.delete(cart);
     }
-    //회원수정
+
+    //장바구니 수정
     @Override
     @Transactional
     public void updateCart(Long userId,CartDto cartDto) {
-        CartEntity cart = cartRepository.findByUserIdIdAndMenusId(userId, cartDto.getMenuId())
+        CartEntity cart = cartRepository.findByUserIdIdAndMenuIdId(userId, cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
 
         MenuEntity menu = menuRepository.findById(cartDto.getMenuId())
