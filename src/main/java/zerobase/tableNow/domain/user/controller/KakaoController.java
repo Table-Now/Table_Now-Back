@@ -7,10 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import zerobase.tableNow.domain.user.dto.DeleteDto;
-import zerobase.tableNow.domain.user.dto.InfoUpdateDto;
-import zerobase.tableNow.domain.user.dto.KakaoLoginResponse;
-import zerobase.tableNow.domain.user.dto.MyInfoDto;
+import zerobase.tableNow.domain.user.dto.*;
 import zerobase.tableNow.domain.user.service.KakaoService;
 
 import java.util.HashMap;
@@ -63,6 +60,19 @@ public class KakaoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Access token is missing.");
         }
         return kakaoService.kakaoLogout(accessToken);
+    }
+
+    /**
+     * 회원수정
+     * @param dto phone
+     * @return 수정완료
+     */
+    @PatchMapping("{phone}")
+    public ResponseEntity<String> updateUserInfo(
+            @PathVariable(name = "phone") String phone
+    ) {
+        String updatedUser = kakaoService.infoUpdate(phone);
+        return ResponseEntity.ok(updatedUser);
     }
 
 

@@ -221,4 +221,29 @@ public class KakaoServicelmpl implements KakaoService {
         }
     }
 
+    /**
+     * 회원 수정
+     * @param dto phone
+     * @return 회원수정
+     */
+    @Override
+    public String infoUpdate(String phone) {
+        // 현재 로그인한 사용자 ID 가져오기
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 사용자 정보 조회
+        UsersEntity userEntity = userRepository.findByUser(userId)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        // 전화번호 업데이트 (Dirty Checking이 변경 사항을 감지)
+        userEntity.setPhone(phone);
+        userRepository.save(userEntity);
+
+
+        // 영속성 컨텍스트에서 Dirty Checking에 의해 자동으로 업데이트됨
+
+        // 수정된 사용자 정보를 반환
+        return "정상적으로 수정되었습니다";
+    }
+
 }

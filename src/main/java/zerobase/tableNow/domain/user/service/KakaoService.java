@@ -1,10 +1,8 @@
 package zerobase.tableNow.domain.user.service;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import zerobase.tableNow.domain.user.dto.DeleteDto;
-import zerobase.tableNow.domain.user.dto.InfoUpdateDto;
-import zerobase.tableNow.domain.user.dto.KakaoLoginResponse;
-import zerobase.tableNow.domain.user.dto.MyInfoDto;
+import zerobase.tableNow.domain.user.dto.*;
 
 public interface KakaoService {
 
@@ -22,4 +20,5 @@ public interface KakaoService {
      */
     ResponseEntity<String> kakaoLogout(String accessToken);
 
+    String infoUpdate(String phone);
 }
