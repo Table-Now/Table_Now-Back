@@ -11,7 +11,7 @@ public class CartMapper {
                 .id(cartEntity.getId())
                 .userId(cartEntity.getUserId().getId())
                 .menuId(cartEntity.getMenuId().getId())
-                .store(cartEntity.getStore().getId())
+                .storeId(cartEntity.getStoreId().getId())
                 .totalCount(cartEntity.getTotalCount())
                 .totalAmount(cartEntity.getTotalAmount())
                 .build();
