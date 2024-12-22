@@ -54,6 +54,7 @@ dependencies {
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+	implementation("com.github.iamport:iamport-rest-client-java:0.2.23")
 }
 
 tasks.named('test') {
