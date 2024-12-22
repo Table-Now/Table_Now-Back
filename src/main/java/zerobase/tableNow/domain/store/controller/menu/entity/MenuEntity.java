@@ -42,7 +42,7 @@ public class MenuEntity extends BaseEntity {
 
     private int count; //개수
 
-    @ManyToMany(mappedBy = "menus")
+    @ManyToMany(mappedBy = "menuId")
     private List<CartEntity> carts = new ArrayList<>();
 
 }

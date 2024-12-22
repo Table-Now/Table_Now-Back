@@ -19,7 +19,4 @@ public interface StoreRepository extends JpaRepository<StoreEntity,Long> {
     Optional<StoreEntity> findByStore(String store);
 
     List<StoreEntity> findByStoreContainingIgnoreCase(String keyword);
-
-
 }
-
