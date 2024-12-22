@@ -17,5 +17,5 @@ public class LoginDto {
 
     private Role role;
 
-    //    private String token;
+
 }

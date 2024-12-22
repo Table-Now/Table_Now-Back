@@ -65,38 +65,5 @@ public class KakaoController {
         return kakaoService.kakaoLogout(accessToken);
     }
 
-    /**
-     * 회원수정
-     * @param dto phone
-     * @return 수정완료
-     */
-    @PatchMapping("{phone}")
-    public ResponseEntity<InfoUpdateDto> updateUserInfo(
-            @PathVariable(name = "phone") String phone,
-            @RequestBody @Valid InfoUpdateDto dto
-    ) {
-        InfoUpdateDto updatedUser = kakaoService.infoUpdate(phone, dto);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    /**
-     * 회원 정지
-     * @param user user
-     * @return user
-     */
-    @DeleteMapping("{user}")
-    public ResponseEntity<DeleteDto> userDelete(@PathVariable(name = "user") String user){
-        return ResponseEntity.ok().body(kakaoService.userDelete(user));
-    }
-
-    /**
-     * 회원 정보 가져오기
-     * @param user user
-     * @return user
-     */
-    @GetMapping("info/{user}")
-    public ResponseEntity<MyInfoDto> myInfo( @PathVariable("user")String user){
-        return ResponseEntity.ok().body(kakaoService.myInfo(user));
-    }
 
 }

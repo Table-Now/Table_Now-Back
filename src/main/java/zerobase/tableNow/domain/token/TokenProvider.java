@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import zerobase.tableNow.domain.user.dto.LocalLoginDto;
 import zerobase.tableNow.domain.user.dto.LoginDto;
 
 import javax.crypto.SecretKey;
@@ -33,6 +34,15 @@ public class TokenProvider {
                 .claim("user", dto.getUser())
                 .claim("role", dto.getRole())
                 .claim("phone",dto.getPhone())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSecretKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+    public String localGenerateAccessToken(LocalLoginDto localLoginDto) {
+        return Jwts.builder()
+                .claim("user", localLoginDto.getUser())
+                .claim("role", localLoginDto.getRole())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS512)

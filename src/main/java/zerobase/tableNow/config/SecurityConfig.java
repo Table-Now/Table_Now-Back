@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/chat/messages",
                                 "/ws/**",
                                 "/ws-chat",
-                                "/ws-chat/**"
+                                "/ws-chat/**",
+                                "/menus/menu/**"
                         ).permitAll()
                         .anyRequest().authenticated()
 //                        .anyRequest().permitAll()

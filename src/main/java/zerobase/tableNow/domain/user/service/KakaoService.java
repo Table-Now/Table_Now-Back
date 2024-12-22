@@ -22,26 +22,4 @@ public interface KakaoService {
      */
     ResponseEntity<String> kakaoLogout(String accessToken);
 
-    /**
-     * 회원 수정
-     * @param dto phone
-     * @return 회원수정
-     */
-    InfoUpdateDto infoUpdate(String phone,InfoUpdateDto dto);
-
-    /**
-     * 회원 정지
-     * @param userId user
-     * @return user
-     */
-    DeleteDto userDelete(String userId);
-
-    /**
-     * 회원 정보 가져오기
-     * @param user user
-     * @return user
-     */
-    MyInfoDto myInfo(String user);
-
-
 }
