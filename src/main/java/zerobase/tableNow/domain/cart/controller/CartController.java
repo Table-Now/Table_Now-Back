@@ -16,33 +16,33 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping(name = "/cart/")
+@RequestMapping("/cart")
 public class CartController {
     private final CartService cartService;
 
     //장바구니 등록
-    @PostMapping("addCart/{storeId}")
+    @PostMapping("/addCart/{storeId}")
     public ResponseEntity<CartDto> addCart(@Valid  @PathVariable(name = "storeId")Long storeId,
                                            @RequestBody CartDto cartDto){
         return ResponseEntity.ok().body(cartService.addCart(storeId,cartDto));
     }
 
     //내 장바구니 리스트
-    @GetMapping("use/{userId}")
+    @GetMapping("/use/{userId}")
     public ResponseEntity<List<CartDto>> cartList (@PathVariable(name = "userId")
-                                                      Long userId){
+                                                      String userId){
         return ResponseEntity.ok().body(cartService.cartList(userId));
     }
 
     //장바구니 삭제
-    @DeleteMapping("use/{cartId}")
+    @DeleteMapping("/use/{cartId}")
     public ResponseEntity<String> cartDelete(@PathVariable(name = "cartId") Long cartId){
         cartService.cartDelete(cartId);
         return ResponseEntity.ok("success");
     }
 
     //장바구니 수정
-    @PatchMapping("cart/{userId}")
+    @PatchMapping("/cart/{userId}")
     public ResponseEntity<?> updateCart(@Valid @PathVariable(name = "userId") Long userId,
                                              @RequestBody CartDto cartDto){
         cartService.updateCart(userId,cartDto);

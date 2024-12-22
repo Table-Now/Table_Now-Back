@@ -1,4 +1,4 @@
-package zerobase.tableNow.domain.order.dto;
+package zerobase.tableNow.domain.payment.dto;
 
 import lombok.*;
 import zerobase.tableNow.domain.constant.Status;
@@ -8,7 +8,7 @@ import zerobase.tableNow.domain.constant.Status;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto {
+public class PaymentDto {
     private Long id;
     private String userId;
     private String storeId;

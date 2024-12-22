@@ -21,6 +21,7 @@ import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,9 +59,9 @@ public class CartServiceImpl implements CartService {
         StoreEntity storeEntity = storeRepository.findById(storeId)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        // 매장과 메뉴가 일치하는지 검증
+        // 메뉴 정보 조회 및 검증
         MenuEntity menuEntity = menuRepository.findById(cartDto.getMenuId())
-                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
 
         if (!menuEntity.getStoreId().getId().equals(storeId)) {
             throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "해당 매장의 메뉴가 아닙니다.");
@@ -72,7 +73,7 @@ public class CartServiceImpl implements CartService {
         // 장바구니 엔티티 생성
         CartEntity cartEntity = CartEntity.builder()
                 .userId(userEntity)
-                .menuId(menuEntity)
+                .menus(Collections.singletonList(menuEntity))
                 .storeId(storeEntity)
                 .totalCount(cartDto.getTotalCount())
                 .totalAmount(totalAmount)
@@ -90,8 +91,9 @@ public class CartServiceImpl implements CartService {
 
     //장바구니 목록
     @Override
-    public List<CartDto> cartList(Long userId) {
-        List<CartEntity> cartEntities = cartRepository.findAll();
+    public List<CartDto> cartList(String userId) {
+        List<CartEntity> cartEntities = cartRepository.findByUserId_User(userId);
+
         return cartEntities.stream()
                 .map(cartMapper::toCartDto)
                 .collect(Collectors.toList());
@@ -121,7 +123,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void updateCart(Long userId,CartDto cartDto) {
-        CartEntity cart = cartRepository.findByUserIdIdAndMenuIdId(userId, cartDto.getMenuId())
+        CartEntity cart = cartRepository.findByUserIdIdAndMenusId(userId, cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
 
         MenuEntity menu = menuRepository.findById(cartDto.getMenuId())
