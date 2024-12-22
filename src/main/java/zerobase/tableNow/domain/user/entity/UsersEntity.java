@@ -39,7 +39,6 @@ public class UsersEntity extends BaseEntity {
     private String kakaoRefreshToken;
 
 
-//    private String name;
-//    private String password;
+    private String password; //로컬 패스워드
 
 }

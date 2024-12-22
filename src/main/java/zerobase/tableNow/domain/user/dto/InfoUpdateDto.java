@@ -12,4 +12,7 @@ import zerobase.tableNow.domain.constant.Status;
 public class InfoUpdateDto {
     @NotBlank(message = "전화번호는 필수입니다.")
     private String phone;
+    private String password;
+    private String email;
+    private Status status;
 }

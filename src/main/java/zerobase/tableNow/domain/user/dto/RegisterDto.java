@@ -22,12 +22,10 @@ public class RegisterDto {
     private String user;
     @NotBlank(message = "이메일은 필수입니다.")
     private String email;
+    private String password;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     private Role role; //사용자타입
     private Status userStatus; //이용가능한 상태, 정지상태
-
-//    private String name;
-//    private String password;
-//    private String phone;
 }
