@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import zerobase.tableNow.domain.store.controller.menu.dto.MenuDetailDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuUpdateDto;
 import zerobase.tableNow.domain.store.controller.menu.service.MenuService;
@@ -60,4 +61,9 @@ public class MenuController {
         return ResponseEntity.ok("success");
     }
 
+    // 메뉴 상세보기
+    @GetMapping("detail/{menuId}")
+    public ResponseEntity<MenuDetailDto> menuDetail(@PathVariable(name = "menuId")Long menuId){
+        return ResponseEntity.ok().body(menuService.menuDetail(menuId));
+    }
 }
