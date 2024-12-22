@@ -20,13 +20,16 @@ public class CartEntity extends BaseEntity{
         private Long id;
 
         @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "user_id")
         private UsersEntity userId;
 
         @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "menu_id")
         private MenuEntity menuId;
 
         @ManyToOne(fetch = FetchType.LAZY)
-        private StoreEntity store;
+        @JoinColumn(name = "store_id")
+        private StoreEntity storeId;
 
         private int totalCount; //개수
 

@@ -73,7 +73,7 @@ public class CartServiceImpl implements CartService {
         CartEntity cartEntity = CartEntity.builder()
                 .userId(userEntity)
                 .menuId(menuEntity)
-                .store(storeEntity)
+                .storeId(storeEntity)
                 .totalCount(cartDto.getTotalCount())
                 .totalAmount(totalAmount)
                 .build();
