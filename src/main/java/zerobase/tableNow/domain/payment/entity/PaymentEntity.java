@@ -1,7 +1,6 @@
-package zerobase.tableNow.domain.order.entity;
+package zerobase.tableNow.domain.payment.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import zerobase.tableNow.domain.baseEntity.BaseEntity;
 import zerobase.tableNow.domain.cart.entity.CartEntity;
@@ -14,8 +13,8 @@ import zerobase.tableNow.domain.user.entity.UsersEntity;
 @Getter
 @Setter
 @Entity
-@Table(name = "orders")
-public class OrderEntity extends BaseEntity {
+@Table(name = "payment")
+public class PaymentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,9 +27,10 @@ public class OrderEntity extends BaseEntity {
     @JoinColumn(name = "store_id")
     private StoreEntity storeId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private CartEntity cartId;
+
 
     private int totalCount; //개수
     private int totalAmount; // 총액

@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CartRepository extends JpaRepository<CartEntity,Long> {
-    Optional<CartEntity> findByUserIdIdAndMenuIdId(Long userId, Long menuId);
-
-    CartEntity findByIdAndUserId(Long cartId, UsersEntity userEntity);
+public interface CartRepository extends JpaRepository<CartEntity,Long>{
+    List<CartEntity> findByUserId_User(String userId);
+    Optional<CartEntity> findByUserIdIdAndMenusId(Long userId, Long menuId);
 }

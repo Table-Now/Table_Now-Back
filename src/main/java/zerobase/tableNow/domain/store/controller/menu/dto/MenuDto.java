@@ -32,4 +32,10 @@ public class MenuDto {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    // 생성자 추가
+    public MenuDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

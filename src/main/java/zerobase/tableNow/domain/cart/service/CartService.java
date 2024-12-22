@@ -7,7 +7,7 @@ import java.util.List;
 public interface CartService {
     CartDto addCart(Long storeId, CartDto cartDto);
 
-    List<CartDto> cartList(Long userId);
+    List<CartDto> cartList(String userId);
 
     void cartDelete(Long cartId);
 

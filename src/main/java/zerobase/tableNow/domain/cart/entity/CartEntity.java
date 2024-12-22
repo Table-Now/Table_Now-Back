@@ -7,6 +7,9 @@ import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -23,9 +26,13 @@ public class CartEntity extends BaseEntity{
         @JoinColumn(name = "user_id")
         private UsersEntity userId;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "menu_id")
-        private MenuEntity menuId;
+        @ManyToMany(fetch = FetchType.LAZY)
+        @JoinTable(
+                name = "cart_menu",
+                joinColumns = @JoinColumn(name = "cart_id"),
+                inverseJoinColumns = @JoinColumn(name = "menu_id")
+        )
+        private List<MenuEntity> menus = new ArrayList<>();
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "store_id")
