@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.components.S3UploadComponents;
 import zerobase.tableNow.domain.constant.Role;
 import zerobase.tableNow.domain.constant.Status;
+import zerobase.tableNow.domain.store.controller.menu.dto.MenuDetailDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuUpdateDto;
 import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
@@ -203,5 +204,21 @@ public class MenuServiceImpl implements MenuService{
         } else {
             throw new TableException(ErrorCode.INVALID_REQUEST);
         }
+    }
+    //메뉴 상세정보
+    @Override
+    public MenuDetailDto menuDetail(Long menuId) {
+        /// 현재 로그인한 사용자 ID 가져오기
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        UsersEntity users = userRepository.findByUser(userId)
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+
+        // 메뉴 ID로 메뉴 조회
+        MenuEntity menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
+
+        // DTO로 변환하여 반환
+        return MenuDetailDto.of(menu);
+
     }
 }

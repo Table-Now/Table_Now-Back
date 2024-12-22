@@ -2,6 +2,7 @@ package zerobase.tableNow.domain.store.controller.menu.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import zerobase.tableNow.domain.constant.Status;
+import zerobase.tableNow.domain.store.controller.menu.dto.MenuDetailDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuDto;
 import zerobase.tableNow.domain.store.controller.menu.dto.MenuUpdateDto;
 
@@ -17,4 +18,6 @@ public interface MenuService {
     void update(Long menuId, MenuUpdateDto menuUpdateDto, MultipartFile image);
 
     void reStatus(Long menuId);
+
+    MenuDetailDto menuDetail(Long menuId);
 }
