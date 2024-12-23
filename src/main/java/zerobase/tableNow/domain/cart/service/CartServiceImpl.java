@@ -72,9 +72,9 @@ public class CartServiceImpl implements CartService {
 
         // 장바구니 엔티티 생성
         CartEntity cartEntity = CartEntity.builder()
-                .userId(userEntity)
-                .menuId(menuEntity)
-                .storeId(storeEntity)
+                .user(userEntity)
+                .menu(menuEntity)
+                .store(storeEntity)
                 .totalCount(cartDto.getTotalCount())
                 .totalAmount(totalAmount)
                 .build();
@@ -114,7 +114,7 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
 
         // 로그인한 사용자와 장바구니의 소유자가 일치하는지 확인
-        if (!cart.getUserId().equals(userEntity)) {
+        if (!cart.getUser().equals(userEntity)) {
             throw new TableException(ErrorCode.FORBIDDEN_ACCESS);
         }
         cartRepository.delete(cart);
@@ -124,7 +124,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void updateCart(String userId,CartDto cartDto) {
-        CartEntity cart = cartRepository.findByUserId_UserAndMenuIdId(userId, cartDto.getMenuId())
+        CartEntity cart = cartRepository.findByUser_UserAndMenu_Id(userId, cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
 
         MenuEntity menu = menuRepository.findById(cartDto.getMenuId())

@@ -17,9 +17,6 @@ public class OrderDto {
     private String orderName;
     private String merchantUid;
     private BigDecimal totalAmount;
-    private String postCode;
     private Boolean paymentStatus;
     private PayMethod payMethod;
-    private String status;
-
 }

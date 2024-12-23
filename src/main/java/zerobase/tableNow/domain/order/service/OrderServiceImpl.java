@@ -7,6 +7,7 @@ import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.order.dto.OrderDto;
 import zerobase.tableNow.domain.order.entity.OrderEntity;
 import zerobase.tableNow.domain.order.repository.OrderRepository;
+import zerobase.tableNow.domain.order.service.OrderService;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.store.repository.StoreRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
@@ -18,32 +19,35 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
 
+    /**
+     * 주문 정보 임시저장
+     * @param orderDto
+     * @return
+     */
     @Override
     @Transactional
     public OrderDto createOrder(OrderDto orderDto) {
         UsersEntity users = userRepository.findByUser(orderDto.getUserId())
-                .orElseThrow(()->new TableException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         StoreEntity store = storeRepository.findById(orderDto.getStoreId())
-                .orElseThrow(()-> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         String merchantUid = UUID.randomUUID().toString(); // 랜덤 UUID 생성
 
         // 주문 엔티티 생성
         OrderEntity orderEntity = OrderEntity.builder()
-                .userId(users)
-                .storeId(store)
+                .user(users)
+                .store(store)
                 .orderName(orderDto.getOrderName())
                 .merchantUid(merchantUid)
                 .totalAmount(orderDto.getTotalAmount())
-                .postCode(orderDto.getPostCode())
                 .paymentStatus(false) // 결제 미완료
-                .status(Status.PENDING) // 임시 저장 상태
                 .build();
 
         // 데이터베이스에 저장
@@ -52,14 +56,12 @@ public class OrderServiceImpl implements OrderService{
         // 저장된 엔티티를 기반으로 DTO 반환
         return OrderDto.builder()
                 .id(orderEntity.getId())
-                .userId(orderEntity.getUserId().getUser())
-                .storeId(orderEntity.getStoreId().getId())
+                .userId(orderEntity.getUser().getUser())
+                .storeId(orderEntity.getStore().getId())
                 .orderName(orderEntity.getOrderName())
                 .merchantUid(orderEntity.getMerchantUid())
                 .totalAmount(orderEntity.getTotalAmount())
-                .postCode(orderEntity.getPostCode())
                 .paymentStatus(orderEntity.getPaymentStatus())
-                .status(orderDto.getStatus())
                 .build();
 
     }
