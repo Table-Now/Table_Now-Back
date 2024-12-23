@@ -55,7 +55,7 @@ public class MenuServiceImpl implements MenuService{
         }
 
         // storeId로 매장 조회
-        StoreEntity store = storeRepository.findById(menuDto.getStoreId())
+        StoreEntity store = storeRepository.findById(menuDto.getStore())
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
 
         String imageUrl = null;
@@ -92,7 +92,7 @@ public class MenuServiceImpl implements MenuService{
         return menuEntities.stream()
                 .map(menu -> MenuDto.builder()
                         .id(menu.getId())
-                        .storeId(menu.getStoreId().getId())
+                        .store(menu.getStore().getId())
                         .image(menu.getImage())
                         .name(menu.getName())
                         .price(menu.getPrice())
@@ -147,7 +147,7 @@ public class MenuServiceImpl implements MenuService{
                 .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
 
         // 메뉴가 속한 매장 정보 조회
-        StoreEntity store = menu.getStoreId();
+        StoreEntity store = menu.getStore();
 
         // 매장 소유자 확인
         if (!store.getUser().equals(users)) {

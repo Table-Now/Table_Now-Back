@@ -17,7 +17,7 @@ public class MenuDto {
     private Long id;
 
     @NotBlank(message = "상점 이름 필수 입력.")
-    private Long storeId;
+    private Long store;
 
     private String image;
 

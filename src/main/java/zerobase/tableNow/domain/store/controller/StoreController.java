@@ -48,7 +48,7 @@ public class StoreController {
 
         for (int i = 0; i < menuDtos.size(); i++) {
             MenuDto menuDto = menuDtos.get(i);
-            menuDto.setStoreId(savedStore.getId());  // 상점 ID 설정
+            menuDto.setStore(savedStore.getId());  // 상점 ID 설정
 
             // Check if there's a corresponding menu image
             MultipartFile menuImage = (menuImages != null && i < menuImages.size()) ? menuImages.get(i) : null;

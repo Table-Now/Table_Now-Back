@@ -67,7 +67,7 @@ public class StoreEntity extends BaseEntity implements Serializable {
     @Builder.Default
     private List<ReservationEntity> reservations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "storeId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<MenuEntity> menus = new ArrayList<>();
 
