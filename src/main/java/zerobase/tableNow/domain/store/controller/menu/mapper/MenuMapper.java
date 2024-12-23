@@ -14,7 +14,7 @@ public class MenuMapper {
         int totalCount = menuDto.getPrice() * menuDto.getCount();
 
         return MenuEntity.builder()
-                .storeId(store)
+                .store(store)
                 .image(menuDto.getImage())
                 .name(menuDto.getName())
                 .price(menuDto.getPrice())
@@ -25,7 +25,7 @@ public class MenuMapper {
 
     public MenuDto toMenuDto(MenuEntity menu){
         return MenuDto.builder()
-                .storeId(menu.getStoreId().getId())
+                .store(menu.getStore().getId())
                 .image(menu.getImage())
                 .name(menu.getName())
                 .price(menu.getPrice())
