@@ -45,5 +45,4 @@ public class MenuEntity extends BaseEntity {
     @OneToMany(mappedBy = "menuId", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<CartEntity> carts = new ArrayList<>();
-
 }

@@ -123,8 +123,8 @@ public class CartServiceImpl implements CartService {
     //장바구니 수정
     @Override
     @Transactional
-    public void updateCart(Long userId,CartDto cartDto) {
-        CartEntity cart = cartRepository.findByUserIdIdAndMenuIdId(userId, cartDto.getMenuId())
+    public void updateCart(String userId,CartDto cartDto) {
+        CartEntity cart = cartRepository.findByUserId_UserAndMenuIdId(userId, cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.CART_NOT_FOUND));
 
         MenuEntity menu = menuRepository.findById(cartDto.getMenuId())
