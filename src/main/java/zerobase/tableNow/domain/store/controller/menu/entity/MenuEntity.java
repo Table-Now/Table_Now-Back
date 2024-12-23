@@ -27,7 +27,7 @@ public class MenuEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    private StoreEntity storeId;
+    private StoreEntity store;
 
     private String image;
     @NotBlank(message = "메뉴 이름 필수 입력.")
@@ -41,9 +41,6 @@ public class MenuEntity extends BaseEntity {
     private Status status;
 
     private int count; //개수
-
-//    @ManyToMany(mappedBy = "menuId")
-//    private List<CartEntity> carts = new ArrayList<>();
 
     @OneToMany(mappedBy = "menuId", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default

@@ -63,7 +63,7 @@ public class CartServiceImpl implements CartService {
         MenuEntity menuEntity = menuRepository.findById(cartDto.getMenuId())
                 .orElseThrow(() -> new TableException(ErrorCode.MENU_NOT_FOUND));
 
-        if (!menuEntity.getStoreId().getId().equals(storeId)) {
+        if (!menuEntity.getStore().getId().equals(storeId)) {
             throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "해당 매장의 메뉴가 아닙니다.");
         }
 
