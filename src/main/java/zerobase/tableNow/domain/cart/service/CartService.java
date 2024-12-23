@@ -11,5 +11,5 @@ public interface CartService {
 
     void cartDelete(Long cartId);
 
-    void updateCart(Long userId,CartDto cartDto);
+    void updateCart(String userId,CartDto cartDto);
 }

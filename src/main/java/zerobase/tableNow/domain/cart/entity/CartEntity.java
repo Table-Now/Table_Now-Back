@@ -7,8 +7,6 @@ import zerobase.tableNow.domain.store.controller.menu.entity.MenuEntity;
 import zerobase.tableNow.domain.store.entity.StoreEntity;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

@@ -43,7 +43,7 @@ public class CartController {
 
     //장바구니 수정
     @PatchMapping("/cart/{userId}")
-    public ResponseEntity<?> updateCart(@Valid @PathVariable(name = "userId") Long userId,
+    public ResponseEntity<?> updateCart(@Valid @PathVariable(name = "userId") String userId,
                                              @RequestBody CartDto cartDto){
         cartService.updateCart(userId,cartDto);
         return ResponseEntity.ok("장바구니가 성공적으로 수정되었습니다.");

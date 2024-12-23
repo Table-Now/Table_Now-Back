@@ -42,7 +42,10 @@ public class MenuEntity extends BaseEntity {
 
     private int count; //개수
 
-    @ManyToMany(mappedBy = "menuId")
-    private List<CartEntity> carts = new ArrayList<>();
+//    @ManyToMany(mappedBy = "menuId")
+//    private List<CartEntity> carts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "menuId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<CartEntity> carts = new ArrayList<>();
 }
