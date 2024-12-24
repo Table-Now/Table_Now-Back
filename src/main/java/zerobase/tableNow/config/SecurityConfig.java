@@ -56,10 +56,10 @@ public class SecurityConfig {
                                 "/ws-chat/**",
                                 "/menus/menu/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
-//                        .anyRequest().permitAll()
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+//                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+                );
+//                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 //                .addFilterBefore(accessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 카카오 액세스 토큰 필터 추가
 
 
