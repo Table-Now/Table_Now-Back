@@ -120,7 +120,7 @@ public class CartServiceImpl implements CartService {
         cartRepository.delete(cart);
     }
 
-    //장바구니 수정
+    //장바구니 수정(수량만)
     @Override
     @Transactional
     public void updateCart(String userId,CartDto cartDto) {
