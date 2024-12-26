@@ -37,7 +37,7 @@ public class ChatServiceImpl implements ChatService {
     public void handleUserJoin(String user) {
         ChatMessageDto joinMessage = ChatMessageDto.builder()
                 .user(user)
-                .content(user + "님이 채팅방에 입장했습니다.")
+                .content(" 님이 채팅방에 입장했습니다.")
                 .build();
         saveMessage(joinMessage);
     }
@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
     public void handleUserLeave(String user) {
         ChatMessageDto leaveMessage = ChatMessageDto.builder()
                 .user(user)
-                .content(user + "님이 채팅방에서 퇴장했습니다.")
+                .content(user)
                 .build();
         saveMessage(leaveMessage);
     }

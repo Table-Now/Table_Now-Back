@@ -31,6 +31,7 @@ public class ReservationMapper {
                 .peopleNb(reservationEntity.getPeopleNb())
                 .reservationStatus(reservationEntity.getReservationStatus())
                 .storeId(reservationEntity.getStore().getId())  // 상점 ID 추가
+                .waitingNumber(reservationEntity.getWaitingNumber())
                 .build();
     }
 
