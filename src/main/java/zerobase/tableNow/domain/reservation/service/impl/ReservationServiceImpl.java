@@ -109,7 +109,7 @@ public class ReservationServiceImpl implements ReservationService {
             if (reservationEntity.getReservationStatus() == Status.ING) {
                 // 대기번호 부여 (큐에서 하나씩 꺼내서 부여)
                 Integer waitingNumber =
-                        waitingNumberQueue.isEmpty() ? 1 : waitingNumberQueue.poll(); // 큐에서 대기번호를 꺼내고, 다음 번호 부여
+                        waitingNumberQueue.isEmpty() ? 1 : waitingNumberQueue.poll();
 
                 // 다음 대기번호를 큐에 추가
                 waitingNumberQueue.add(waitingNumber + 1);
@@ -151,6 +151,7 @@ public class ReservationServiceImpl implements ReservationService {
                     // storeId를 추가로 포함시켜 ReservationDto로 변환
                     ReservationDto dto = reservationMapper.toReserDto(reservation);
                     dto.setStoreId(reservation.getStore().getId());
+                    dto.setWaitingNumber(reservation.getWaitingNumber());
                     return dto;
                 })
                 .collect(Collectors.toList());

@@ -24,7 +24,7 @@ public class ReservationDto {
 
     @NotNull(message = "예약인원 필수 입력.")
     private Integer peopleNb; // 예약인원
-
+    private Integer waitingNumber;
     private Status reservationStatus; // 줄서기여부
 
     private Long storeId;

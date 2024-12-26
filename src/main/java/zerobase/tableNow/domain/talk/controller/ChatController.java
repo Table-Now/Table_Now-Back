@@ -13,6 +13,7 @@ import zerobase.tableNow.domain.talk.repository.ChatRepository;
 import zerobase.tableNow.domain.talk.service.ChatService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class ChatController {
             SimpMessageHeaderAccessor headerAccessor
     ) {
         // WebSocket 세션에 username 추가
-        headerAccessor.getSessionAttributes().put("user", chatMessage.getUser());
+        Objects.requireNonNull(headerAccessor.getSessionAttributes()).put("user", chatMessage.getUser());
         chatService.handleUserJoin(chatMessage.getUser());
         return chatMessage;
     }
