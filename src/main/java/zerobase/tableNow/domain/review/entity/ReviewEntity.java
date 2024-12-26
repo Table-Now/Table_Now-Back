@@ -13,7 +13,7 @@ import zerobase.tableNow.domain.user.entity.UsersEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "reviews")
+@Table(name = "review")
 public class ReviewEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class ReviewEntity extends BaseEntity {
     private String store; // 상점
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user_id")
     private UsersEntity user;
 
     @Column(nullable = false)

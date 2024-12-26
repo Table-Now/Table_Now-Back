@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "EmailAuth")
+@Table(name = "email")
 public class EmailEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
