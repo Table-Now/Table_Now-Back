@@ -46,15 +46,6 @@ public class CartServiceImpl implements CartService {
         UsersEntity userEntity = userRepository.findByUser(userId)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
-        // 해당 사용자의 예약 정보 조회
-        ReservationEntity reservationEntity = reservationRepository.findByPhone(userEntity.getPhone())
-                .orElseThrow(() -> new TableException(ErrorCode.RESERVATION_NOT_FOUND));
-
-        // 대기번호가 부여된 상태인지 확인
-        if (reservationEntity.getWaitingNumber() == null) {
-            throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "대기번호가 부여되지 않은 상태에서는 주문이 불가능합니다.");
-        }
-
         // 매장 정보 조회
         StoreEntity storeEntity = storeRepository.findById(storeId)
                 .orElseThrow(() -> new TableException(ErrorCode.PRODUCT_NOT_FOUND));
