@@ -15,6 +15,8 @@ public class CartMapper {
                 .storeId(cartEntity.getStore().getId())  // 매장 ID
                 .totalCount(cartEntity.getTotalCount())    // 총 개수
                 .totalAmount(cartEntity.getTotalAmount())  // 총 금액
+                .menu(cartEntity.getMenu().getName())
+                .image(cartEntity.getMenu().getImage())
                 .build();
     }
 }
