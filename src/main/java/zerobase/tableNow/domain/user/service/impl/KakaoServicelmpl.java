@@ -230,11 +230,12 @@ public class KakaoServicelmpl implements KakaoService {
     public String infoUpdate(String phone) {
         // 현재 로그인한 사용자 ID 가져오기
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("서비스 로그인 {}", userId);
 
         // 사용자 정보 조회
         UsersEntity userEntity = userRepository.findByUser(userId)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
-
+        log.info("userEntity {}", userEntity.getUser());
         // 전화번호 업데이트 (Dirty Checking이 변경 사항을 감지)
         userEntity.setPhone(phone);
         userRepository.save(userEntity);
