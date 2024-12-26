@@ -26,4 +26,7 @@ public class CartDto {
 
     @Min(value = 100, message = "100원 이상 주문 가능")
     private int totalAmount; // 총액
+
+    private String menu;        // 메뉴 이름
+    private String image;
 }
