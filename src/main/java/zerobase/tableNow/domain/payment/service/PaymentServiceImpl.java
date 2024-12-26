@@ -72,13 +72,13 @@ public class PaymentServiceImpl implements PaymentService{
         Payment verificationResult = verifyPaymentWithPortone(paymentRequestDto.getImpUid());
 
         // 결제 상태가 성공적인 경우 주문 상태 업데이트
-        if ("paid".equals(verificationResult.getStatus())) {
-            // 주문 상태를 '결제 완료'로 업데이트
-            for (OrderEntity order : orders) {
-                order.setPaymentStatus(true);  // 결제 완료 상태로 변경
-                orderRepository.save(order);   // 상태 업데이트
-            }
-        }
+//        if ("paid".equals(verificationResult.getStatus())) {
+//            // 주문 상태를 '결제 완료'로 업데이트
+//            for (OrderEntity order : orders) {
+//                order.setPaymentStatus(true);  // 결제 완료 상태로 변경
+//                orderRepository.save(order);   // 상태 업데이트
+//            }
+//        }
 
 
         // 결제 처리 성공 메시지 반환
