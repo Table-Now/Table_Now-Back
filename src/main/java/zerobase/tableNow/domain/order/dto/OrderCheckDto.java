@@ -8,11 +8,10 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class OrderDto {
-    private String user;
+public class OrderCheckDto {
     private String takeoutName;
     private String takeoutPhone;
     private BigDecimal totalAmount;
