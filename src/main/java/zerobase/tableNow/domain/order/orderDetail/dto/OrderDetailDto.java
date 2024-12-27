@@ -1,6 +1,5 @@
-package zerobase.tableNow.domain.order.orderDetail;
+package zerobase.tableNow.domain.order.orderDetail.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,8 +10,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailDto {
-    @JsonProperty("menuId")
     private Long menuId;
-    private Long totalPrice;
+    private String menu;
     private Long menuCount;
+    private BigDecimal totalPrice;
+
 }

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "order_detail_table")
+@Table(name = "orders_detail")
 public class OrderDetailEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,14 +20,17 @@ public class OrderDetailEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private OrderEntity order;
+    private OrderEntity orders;
 
     @Column(name = "menu_id")
     private Long menuId;
 
-    @Column(name = "total_price")
-    private Long totalPrice;
+    @Column(name = "menu")
+    private String menu;
 
     @Column(name = "menu_count")
     private Long menuCount;
+
+    @Column(name = "total_price")
+    private BigDecimal totalPrice;
 }

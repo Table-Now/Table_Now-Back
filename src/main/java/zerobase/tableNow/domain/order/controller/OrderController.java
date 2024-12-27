@@ -1,36 +1,42 @@
 package zerobase.tableNow.domain.order.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import zerobase.tableNow.domain.order.dto.OrderCheckDto;
 import zerobase.tableNow.domain.order.dto.OrderDto;
 import zerobase.tableNow.domain.order.service.OrderService;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order")
+@RequestMapping("/orders")
 @Slf4j
 public class OrderController {
     private final OrderService orderService;
 
     /**
-     * 주문서에 나타낼 정보
+     * 주문서에 나타낼 정보를 등록
      */
     @PostMapping("/create")
-    public ResponseEntity<OrderDto> createOrder(
-            @RequestBody @Valid OrderDto orderDto
-    ) throws JsonProcessingException {
-        log.info("Raw request body: {}", new ObjectMapper().writeValueAsString(orderDto));
-
+    public ResponseEntity<String> createOrder(@RequestBody @Valid OrderDto orderDto) {
         OrderDto savedOrder = orderService.createOrder(orderDto);
-        return ResponseEntity.ok(savedOrder);
+        return ResponseEntity.ok("성공적으로 결제등록 되었습니다.");
     }
+
+    /**
+     * 주문 확인
+     * @param user 사용자 아이디
+     * @return String
+     */
+    @GetMapping("/check/{user}")
+    public ResponseEntity<OrderCheckDto> getOrderCheck(
+            @PathVariable(name = "user") String user
+    ) {
+        OrderCheckDto orderDto = orderService.getOrderCheck(user);
+        return ResponseEntity.ok(orderDto);
+    }
+
 }

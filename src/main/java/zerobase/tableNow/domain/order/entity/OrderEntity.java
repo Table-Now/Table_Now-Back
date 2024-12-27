@@ -2,14 +2,10 @@ package zerobase.tableNow.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import zerobase.tableNow.domain.baseEntity.BaseEntity;
-import zerobase.tableNow.domain.constant.PayMethod;
-import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.order.orderDetail.entity.OrderDetailEntity;
-import zerobase.tableNow.domain.store.entity.StoreEntity;
-import zerobase.tableNow.domain.user.entity.UsersEntity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,31 +14,37 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "order_table")
-public class OrderEntity extends BaseEntity {
+@Table(name = "orders")
+public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user")
     private String user;
 
+    @Column(name = "takeout_name")
+    private String takeoutName;
+
+    @Column(name = "takeout_phone")
+    private String takeoutPhone;
+
     @Column(name = "total_amount")
-    private Long totalAmount; // 총가격
+    private BigDecimal totalAmount;
 
     @Column(name = "pay_method")
-    private String payMethod; // 결제 방식
+    private String payMethod;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetailEntity> orderDetails;
-//    private String orderName; // 주문자 이름
+    @Builder.Default  // 이 부분 추가
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetailEntity> orderDetails = new ArrayList<>();
 
-//    @Column(length = 100, name = "merchant_uid")
-//    private String merchantUid; // 주문번호
+    public void addOrderDetail(OrderDetailEntity detail) {
+        if (orderDetails == null) {
+            orderDetails = new ArrayList<>();
+        }
+        orderDetails.add(detail);
+        detail.setOrders(this);
+    }
 
-//    @Column(name = "payment_status")
-//    private Boolean paymentStatus = false; // 결제 상태
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "pay_method")
-//    private PayMethod payMethod; // 결제 방식
 }
