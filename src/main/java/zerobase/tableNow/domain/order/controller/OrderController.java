@@ -22,7 +22,7 @@ public class OrderController {
      */
     @PostMapping("/create")
     public ResponseEntity<String> createOrder(@RequestBody @Valid OrderDto orderDto) {
-        OrderDto savedOrder = orderService.createOrder(orderDto);
+        orderService.createOrder(orderDto);
         return ResponseEntity.ok("성공적으로 결제등록 되었습니다.");
     }
 

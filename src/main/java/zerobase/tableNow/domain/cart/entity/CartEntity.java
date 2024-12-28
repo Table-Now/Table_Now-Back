@@ -35,5 +35,4 @@ public class CartEntity extends BaseEntity{
         private int totalCount; //개수
 
         private int totalAmount; // 총액
-
 }
