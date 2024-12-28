@@ -25,6 +25,9 @@ public class OrderDetailEntity {
     @Column(name = "menu_id")
     private Long menuId;
 
+    @Column(name = "store")
+    private String store;
+
     @Column(name = "menu")
     private String menu;
 

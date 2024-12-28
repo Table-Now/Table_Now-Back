@@ -13,6 +13,7 @@ public class CartMapper {
                 .userId(cartEntity.getUser().getUser()) // 사용자 ID
                 .menuId(cartEntity.getId())  // 메뉴 ID 리스트
                 .storeId(cartEntity.getStore().getId())  // 매장 ID
+                .storeName(cartEntity.getStore().getStore())
                 .totalCount(cartEntity.getTotalCount())    // 총 개수
                 .totalAmount(cartEntity.getTotalAmount())  // 총 금액
                 .menu(cartEntity.getMenu().getName())

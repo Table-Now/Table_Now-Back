@@ -49,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
         orderDto.getOrderDetails().forEach(detailDto -> {
             OrderDetailEntity detail = OrderDetailEntity.builder()
                     .orders(orderEntity)
+                    .store(detailDto.getStore())
                     .menuId(detailDto.getMenuId())
                     .menu(detailDto.getMenu())
                     .menuCount(detailDto.getMenuCount())
@@ -68,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderDetails(savedOrder.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .menuId(detail.getMenuId())
+                                .store(detail.getStore())
                                 .menuCount(detail.getMenuCount())
                                 .totalPrice(detail.getTotalPrice())
                                 .build())
@@ -98,6 +100,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderDetails(orderEntity.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .menuId(detail.getMenuId())
+                                .store(detail.getStore())
                                 .menu(detail.getMenu())
                                 .menuCount(detail.getMenuCount())
                                 .totalPrice(detail.getTotalPrice())

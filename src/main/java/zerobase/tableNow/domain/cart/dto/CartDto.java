@@ -29,4 +29,6 @@ public class CartDto {
 
     private String menu;        // 메뉴 이름
     private String image;
+
+    private String storeName;
 }
