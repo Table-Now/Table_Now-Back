@@ -17,6 +17,7 @@ import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto createOrder(OrderDto orderDto) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        String portId = UUID.randomUUID().toString();
+
         // OrderEntity 생성 시 orderDetails 초기화
         OrderEntity orderEntity = OrderEntity.builder()
                 .user(userId)
@@ -42,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
                 .takeoutPhone(orderDto.getTakeoutPhone())
                 .totalAmount(orderDto.getTotalAmount())
                 .payMethod(orderDto.getPayMethod())
+                .impUid(portId)
                 .orderDetails(new ArrayList<>())  // 명시적 초기화
                 .build();
 
@@ -97,6 +101,7 @@ public class OrderServiceImpl implements OrderService {
                 .takeoutPhone(orderEntity.getTakeoutPhone())
                 .totalAmount(orderEntity.getTotalAmount())
                 .payMethod(orderEntity.getPayMethod())
+                .impUid(orderEntity.getImpUid())
                 .orderDetails(orderEntity.getOrderDetails().stream()
                         .map(detail -> OrderDetailDto.builder()
                                 .menuId(detail.getMenuId())

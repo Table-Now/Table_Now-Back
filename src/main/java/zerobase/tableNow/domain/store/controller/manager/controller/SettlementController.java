@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(name = "/api/settlement")
+@RequestMapping("/api/settlement")
 public class SettlementController {
     private final SettlementService settlementService;
 
@@ -28,10 +28,19 @@ public class SettlementController {
     }
 
     // 하루 매장별 매출
-    @GetMapping("/today/{storeId}")
-    private ResponseEntity<List<SettlementDto>> todaySettlement(@Valid @PathVariable(name = "storeId") Long storeId) {
+//    @GetMapping("/today/{storeId}")
+//    private ResponseEntity<List<SettlementDto>> todaySettlement(@Valid @PathVariable(name = "storeId") Long storeId) {
+//        LocalDate today = LocalDate.now();
+//        return ResponseEntity.ok().body(settlementService.todaySettlement(storeId, getLocalDateTimeOfFrom(today), getLocalDateTimeOfTo(today)));
+//    }
+
+    @GetMapping("/today/{user}")
+    public ResponseEntity<List<SettlementDto>> todaySettlementByUser(
+            @Valid @PathVariable(name = "user") String user) {
         LocalDate today = LocalDate.now();
-        return ResponseEntity.ok().body(settlementService.todaySettlement(storeId, getLocalDateTimeOfFrom(today), getLocalDateTimeOfTo(today)));
+        return ResponseEntity.ok().body(
+                settlementService.todaySettlementByUser(user, getLocalDateTimeOfFrom(today), getLocalDateTimeOfTo(today))
+        );
     }
 
     private LocalDateTime getLocalDateTimeOfTo(LocalDate localDate) {

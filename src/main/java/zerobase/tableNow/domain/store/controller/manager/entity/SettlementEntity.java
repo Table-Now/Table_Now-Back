@@ -22,7 +22,7 @@ public class SettlementEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private StoreEntity store;
-
+    private String storeName;
     private String menu;
     private Long menuCount;
     private BigDecimal totalPrice;

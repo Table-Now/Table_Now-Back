@@ -35,6 +35,8 @@ public class OrderEntity {
     @Column(name = "pay_method")
     private String payMethod;
 
+    private String impUid;
+
     @Builder.Default  // 이 부분 추가
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetailEntity> orderDetails = new ArrayList<>();

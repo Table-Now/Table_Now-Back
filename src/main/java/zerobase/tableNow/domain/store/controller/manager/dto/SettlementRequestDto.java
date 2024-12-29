@@ -23,6 +23,7 @@ public class SettlementRequestDto {
     @AllArgsConstructor
     public static class settlementDetail{
         private StoreEntity store;
+        private String storeName;
         private String menu;
         private Long menuCount;
         private BigDecimal totalPrice;

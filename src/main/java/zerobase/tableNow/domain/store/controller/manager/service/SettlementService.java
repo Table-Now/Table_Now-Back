@@ -1,5 +1,6 @@
 package zerobase.tableNow.domain.store.controller.manager.service;
 
+import jakarta.validation.Valid;
 import zerobase.tableNow.domain.store.controller.manager.dto.SettlementRequestDto;
 import zerobase.tableNow.domain.store.controller.manager.dto.SettlementDto;
 
@@ -10,8 +11,9 @@ import java.util.List;
 public interface SettlementService {
     void processSettlement(SettlementRequestDto settlementRequestDto);
 
-
-    List<SettlementDto> todaySettlement(Long storeId, LocalDateTime localDateTimeOfFrom, LocalDateTime localDateTimeOfTo);
+//    List<SettlementDto> todaySettlement(Long storeId, LocalDateTime localDateTimeOfFrom, LocalDateTime localDateTimeOfTo);
 
     List<SettlementDto> periodSettlement(Long storeId, LocalDate to, LocalDate from);
+
+    List<SettlementDto> todaySettlementByUser(@Valid String userId, LocalDateTime localDateTimeOfFrom, LocalDateTime localDateTimeOfTo);
 }
