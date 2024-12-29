@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface SettlementRepository extends JpaRepository<SettlementEntity,Long> {
     List<SettlementEntity> findAllByStoreIdAndCreateAtBetween(Long storeId, LocalDateTime localDateTimeOfFrom, LocalDateTime localDateTimeOfTo);
+
+    List<SettlementEntity> findAllByStoreIdInAndCreateAtBetween(List<Long> storeIds, LocalDateTime from, LocalDateTime to);
 }

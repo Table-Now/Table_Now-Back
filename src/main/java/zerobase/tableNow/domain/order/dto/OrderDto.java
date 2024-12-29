@@ -17,5 +17,6 @@ public class OrderDto {
     private String takeoutPhone;
     private BigDecimal totalAmount;
     private String payMethod;
+    private String uuid;
     private List<OrderDetailDto> orderDetails;
 }
