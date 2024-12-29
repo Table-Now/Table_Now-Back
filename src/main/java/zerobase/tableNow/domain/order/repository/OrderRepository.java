@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     Optional<OrderEntity> findByUser(String user);
 
-    Optional<OrderEntity> findByImpUid(String impUid);
+    List<OrderEntity> findAllByUser(String user);
 }

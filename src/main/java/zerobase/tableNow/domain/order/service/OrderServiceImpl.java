@@ -7,12 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import zerobase.tableNow.domain.cart.entity.CartEntity;
 import zerobase.tableNow.domain.cart.repository.CartRepository;
+import zerobase.tableNow.domain.constant.PaymentStatus;
 import zerobase.tableNow.domain.order.dto.OrderCheckDto;
 import zerobase.tableNow.domain.order.dto.OrderDto;
 import zerobase.tableNow.domain.order.entity.OrderEntity;
 import zerobase.tableNow.domain.order.orderDetail.dto.OrderDetailDto;
 import zerobase.tableNow.domain.order.orderDetail.entity.OrderDetailEntity;
 import zerobase.tableNow.domain.order.repository.OrderRepository;
+import zerobase.tableNow.domain.payment.entity.PaymentEntity;
+import zerobase.tableNow.domain.payment.repository.PaymentRepository;
 import zerobase.tableNow.domain.user.entity.UsersEntity;
 import zerobase.tableNow.domain.user.repository.UserRepository;
 import zerobase.tableNow.exception.TableException;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final PaymentRepository paymentRepository;
 
     /**
      * 주문 정보 임시저장
@@ -98,12 +102,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 결제 전 최종 확인 목록
+     * 결제 내역
      * @param user user
      * @return 결제 정보
      */
     @Override
-    public OrderCheckDto getOrderCheck(String user) {
+    public List<OrderCheckDto> getOrderCheck(String user) {
         // 현재 인증된 사용자 확인
         String authenticatedUser = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -112,26 +116,48 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Unauthorized access: You can only view your own payment information.");
         }
 
-        // OrderEntity 조회
-        OrderEntity orderEntity = orderRepository.findByUser(user)
-                .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
+        // 사용자에 해당하는 모든 OrderEntity 조회
+        List<OrderEntity> orderEntities = orderRepository.findAllByUser(user);
 
         // OrderEntity -> OrderCheckDto 변환
-        return OrderCheckDto.builder()
-                .takeoutName(orderEntity.getTakeoutName())
-                .takeoutPhone(orderEntity.getTakeoutPhone())
-                .totalAmount(orderEntity.getTotalAmount())
-                .payMethod(orderEntity.getPayMethod())
-                .impUid(orderEntity.getImpUid())
-                .orderDetails(orderEntity.getOrderDetails().stream()
-                        .map(detail -> OrderDetailDto.builder()
-                                .menuId(detail.getMenuId())
-                                .store(detail.getStore())
-                                .menu(detail.getMenu())
-                                .menuCount(detail.getMenuCount())
-                                .totalPrice(detail.getTotalPrice())
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
+        return orderEntities.stream()
+                .map(orderEntity -> {
+                    // OrderEntity에서 impUid 가져오기
+                    String orderImpUid = orderEntity.getImpUid();
+
+                    // PaymentEntity에서 해당 impUid를 가진 PaymentEntity 찾기
+                    PaymentEntity paymentEntity = paymentRepository.findByMerchantUid(orderEntity.getImpUid());  // merchantUid로 찾음
+
+                    // PaymentEntity가 있으면 impUid를 가져옴
+                    String impUid = null;
+                    PaymentStatus paymentStatus = null;
+                    if (paymentEntity != null) {
+                        impUid = paymentEntity.getImpUid();
+                        paymentStatus = paymentEntity.getStatus();
+                    }
+
+
+                    // OrderCheckDto 빌드
+                    return OrderCheckDto.builder()
+                            .takeoutName(orderEntity.getTakeoutName())
+                            .takeoutPhone(orderEntity.getTakeoutPhone())
+                            .totalAmount(orderEntity.getTotalAmount())
+                            .payMethod(orderEntity.getPayMethod())
+                            .impUid(impUid) // 결제의 impUid 추가
+                            .status(paymentStatus)
+                            .orderDetails(orderEntity.getOrderDetails().stream()
+                                    .map(detail -> OrderDetailDto.builder()
+                                            .menuId(detail.getMenuId())
+                                            .store(detail.getStore())
+                                            .menu(detail.getMenu())
+                                            .menuCount(detail.getMenuCount())
+                                            .totalPrice(detail.getTotalPrice())
+                                            .build())
+                                    .collect(Collectors.toList()))
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
+
+
 }
