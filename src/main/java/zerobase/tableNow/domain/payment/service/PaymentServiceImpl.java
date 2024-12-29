@@ -58,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService{
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
 
         // 주문 정보 조회
-        OrderEntity order = orderRepository.findByUuid(paymentRequestDto.getImpUid())
+        OrderEntity order = orderRepository.findByImpUid(paymentRequestDto.getImpUid())
                 .orElseThrow(() -> new TableException(ErrorCode.ORDER_NOT_FOUND));
 
         // Portone API를 통해 결제 검증
