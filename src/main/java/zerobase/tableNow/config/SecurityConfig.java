@@ -54,7 +54,9 @@ public class SecurityConfig {
                                 "/ws/**",
                                 "/ws-chat",
                                 "/ws-chat/**",
-                                "/menus/menu/**"
+                                "/menus/menu/**",
+                                "/v1/api/payment/verify/**",
+                                "/v1/api/payment/cancel"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

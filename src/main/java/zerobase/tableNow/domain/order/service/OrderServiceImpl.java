@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import zerobase.tableNow.domain.cart.entity.CartEntity;
+import zerobase.tableNow.domain.cart.repository.CartRepository;
 import zerobase.tableNow.domain.order.dto.OrderCheckDto;
 import zerobase.tableNow.domain.order.dto.OrderDto;
 import zerobase.tableNow.domain.order.entity.OrderEntity;
@@ -17,6 +19,7 @@ import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
 
     /**
      * 주문 정보 임시저장
@@ -64,6 +68,18 @@ public class OrderServiceImpl implements OrderService {
 
         // 주문 저장
         OrderEntity savedOrder = orderRepository.save(orderEntity);
+        // 결제 완료된 카트 항목 삭제 로직 추가
+        List<CartEntity> userCarts = cartRepository.findByUserId_User(userId);
+        List<Long> completedMenuIds = orderDto.getOrderDetails().stream()
+                .map(OrderDetailDto::getMenuId)
+                .toList();
+
+        List<CartEntity> cartsToRemove = userCarts.stream()
+                .filter(cart -> completedMenuIds.contains(cart.getMenu().getId()))
+                .collect(Collectors.toList());
+
+        cartRepository.deleteAll(cartsToRemove);
+
 
         // DTO 변환 및 반환
         return OrderDto.builder()
@@ -81,6 +97,11 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
+    /**
+     * 결제 전 최종 확인 목록
+     * @param user user
+     * @return 결제 정보
+     */
     @Override
     public OrderCheckDto getOrderCheck(String user) {
         // 현재 인증된 사용자 확인
