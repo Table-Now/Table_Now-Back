@@ -1,9 +1,12 @@
 package zerobase.tableNow.domain.payment.service;
 
+import zerobase.tableNow.domain.payment.dto.PaymentCancelRequestDto;
+import zerobase.tableNow.domain.payment.dto.PaymentCancelResponseDto;
 import zerobase.tableNow.domain.payment.dto.PaymentRequestDto;
 
 public interface PaymentService {
-    PaymentRequestDto getPaymentDetails(Long paymentId);
+    PaymentRequestDto verifyAndGetPayment(String impUid);
 
-    String processPayment(PaymentRequestDto paymentRequestDto);
+
+    PaymentCancelResponseDto cancelPayment(PaymentCancelRequestDto cancelRequestDto);
 }
