@@ -1,6 +1,7 @@
 package zerobase.tableNow.domain.payment.dto;
 
 import lombok.*;
+import zerobase.tableNow.domain.constant.PaymentStatus;
 import zerobase.tableNow.domain.constant.Status;
 import zerobase.tableNow.domain.order.entity.OrderEntity;
 
@@ -15,7 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PaymentRequestDto {
     private String impUid;
-    private BigDecimal amount;
-    private List<OrderEntity> order;
-    private LocalDateTime paidAt;
+    private BigDecimal totalAmount;
+    private PaymentStatus status;
 }
