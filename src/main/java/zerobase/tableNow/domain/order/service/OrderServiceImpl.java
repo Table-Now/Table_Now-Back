@@ -22,6 +22,7 @@ import zerobase.tableNow.exception.TableException;
 import zerobase.tableNow.exception.type.ErrorCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto createOrder(OrderDto orderDto) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        String portId = UUID.randomUUID().toString();
+//        String portId = UUID.randomUUID().toString();
 
         // OrderEntity 생성 시 orderDetails 초기화
         OrderEntity orderEntity = OrderEntity.builder()
@@ -53,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
                 .takeoutPhone(orderDto.getTakeoutPhone())
                 .totalAmount(orderDto.getTotalAmount())
                 .payMethod(orderDto.getPayMethod())
-                .impUid(portId)
+                .impUid(orderDto.getUuid())
                 .orderDetails(new ArrayList<>())  // 명시적 초기화
                 .build();
 
@@ -120,13 +121,11 @@ public class OrderServiceImpl implements OrderService {
         List<OrderEntity> orderEntities = orderRepository.findAllByUser(user);
 
         // OrderEntity -> OrderCheckDto 변환
-        return orderEntities.stream()
+        List<OrderCheckDto> orderDtos = orderEntities.stream()
                 .map(orderEntity -> {
-                    // OrderEntity에서 impUid 가져오기
-                    String orderImpUid = orderEntity.getImpUid();
-
                     // PaymentEntity에서 해당 impUid를 가진 PaymentEntity 찾기
-                    PaymentEntity paymentEntity = paymentRepository.findByMerchantUid(orderEntity.getImpUid());  // merchantUid로 찾음
+                    PaymentEntity paymentEntity = paymentRepository.findByMerchantUid(orderEntity.getImpUid()); // merchantUid로 찾음
+                    log.info(paymentEntity.getImpUid());
 
                     // PaymentEntity가 있으면 impUid를 가져옴
                     String impUid = null;
@@ -135,7 +134,6 @@ public class OrderServiceImpl implements OrderService {
                         impUid = paymentEntity.getImpUid();
                         paymentStatus = paymentEntity.getStatus();
                     }
-
 
                     // OrderCheckDto 빌드
                     return OrderCheckDto.builder()
@@ -157,7 +155,13 @@ public class OrderServiceImpl implements OrderService {
                             .build();
                 })
                 .collect(Collectors.toList());
+
+        // 역순 정렬
+        Collections.reverse(orderDtos);
+
+        return orderDtos;
     }
+
 
 
 }
