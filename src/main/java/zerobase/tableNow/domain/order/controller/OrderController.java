@@ -9,6 +9,8 @@ import zerobase.tableNow.domain.order.dto.OrderCheckDto;
 import zerobase.tableNow.domain.order.dto.OrderDto;
 import zerobase.tableNow.domain.order.service.OrderService;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -32,11 +34,12 @@ public class OrderController {
      * @return String
      */
     @GetMapping("/check/{user}")
-    public ResponseEntity<OrderCheckDto> getOrderCheck(
+    public ResponseEntity<List<OrderCheckDto>> getOrderCheck(
             @PathVariable(name = "user") String user
     ) {
-        OrderCheckDto orderDto = orderService.getOrderCheck(user);
-        return ResponseEntity.ok(orderDto);
+        List<OrderCheckDto> orderDtos = orderService.getOrderCheck(user);
+        return ResponseEntity.ok(orderDtos);
     }
+
 
 }

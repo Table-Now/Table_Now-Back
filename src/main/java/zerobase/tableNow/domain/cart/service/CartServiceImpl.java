@@ -58,6 +58,12 @@ public class CartServiceImpl implements CartService {
             throw new TableException(ErrorCode.FORBIDDEN_ACCESS, "해당 매장의 메뉴가 아닙니다.");
         }
 
+        // 기존 장바구니에서 사용자가 이미 다른 매장의 메뉴를 담고 있는지 확인
+        List<CartEntity> existingCarts = cartRepository.findByUserAndStoreNot(userEntity, storeEntity);
+        if (!existingCarts.isEmpty()) {
+            throw new TableException(ErrorCode.INVALID_REQUEST, "다른 매장의 메뉴가 장바구니에 담겨져 있어 해당 메뉴를 담을 수 없습니다.");
+        }
+
         // 금액 총합산 로직
         int totalAmount = menuEntity.getPrice() * cartDto.getTotalCount();
 
