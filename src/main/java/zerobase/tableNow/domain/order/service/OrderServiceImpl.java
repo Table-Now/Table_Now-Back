@@ -104,14 +104,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public OrderCheckDto getOrderCheck(String user) {
-        // 현재 인증된 사용자 확인
-        String authenticatedUser = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // 사용자 정보가 일치하지 않으면 예외 발생
-        if (!authenticatedUser.equals(user)) {
-            throw new RuntimeException("Unauthorized access: You can only view your own payment information.");
-        }
-
         // OrderEntity 조회
         OrderEntity orderEntity = orderRepository.findByUser(user)
                 .orElseThrow(() -> new TableException(ErrorCode.USER_NOT_FOUND));
