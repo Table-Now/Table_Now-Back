@@ -1,6 +1,7 @@
 package zerobase.tableNow.domain.order.dto;
 
 import lombok.*;
+import zerobase.tableNow.domain.constant.PaymentStatus;
 import zerobase.tableNow.domain.order.orderDetail.dto.OrderDetailDto;
 
 import java.math.BigDecimal;
@@ -17,5 +18,6 @@ public class OrderCheckDto {
     private BigDecimal totalAmount;
     private String payMethod;
     private String impUid;
+    private PaymentStatus status;
     private List<OrderDetailDto> orderDetails;
 }
